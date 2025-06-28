@@ -4,7 +4,7 @@ import { VitePWA } from "vite-plugin-pwa";
 import packageJSON from "./package.json" with { type: "json" };
 
 export default defineConfig({
-  base: "/tiny-pos",
+  base: "/tinypos",
   define: {
     APP_VERSION: `"${packageJSON.version}"`
   },
