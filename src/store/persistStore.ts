@@ -1,25 +1,28 @@
-import usePOSStore from "./pos";
+import usePOSStore, { type POSStoreState } from "./pos";
 
 const KEY = "tiny-pos-storage";
 
-export function persistToLocalStorage() {
-  const { pin, instances, purchases, items } = usePOSStore.getState();
-  const state = JSON.stringify({
-    pin,
-    instances,
-    purchases,
-    items,
+export function setupPersist() {
+  const localStorageState = loadFromLocalStorage();
+  if (localStorageState) {
+    usePOSStore.setState(localStorageState);
+  }
+  usePOSStore.subscribe((state, _prevState) => {
+    persistToLocalStorage(state);
   });
-  localStorage.setItem(KEY, state);
 }
 
-export function loadFromLocalStorage(): boolean {
+export function persistToLocalStorage(state: POSStoreState) {
+  const serializedState = JSON.stringify(state);
+  localStorage.setItem(KEY, serializedState);
+}
+
+export function loadFromLocalStorage(): POSStoreState | null {
   const value = localStorage.getItem(KEY);
-  if (!value) return false;
+  if (!value) return null;
   try {
-    usePOSStore.setState(JSON.parse(value));
+    return JSON.parse(value);
   } catch (_) {
-    return false;
+    return null;
   }
-  return true;
 }

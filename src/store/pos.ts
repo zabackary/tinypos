@@ -1,8 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
 import { create } from "zustand";
-
-function generateId() {
-  return String(Math.random()).split(".")[1].slice(0, 10);
-}
 
 /**
  * An item represents
@@ -110,7 +107,7 @@ const usePOSStore = create<POSStore>((set) => ({
   },
 
   createInstance(name) {
-    const id = generateId();
+    const id = uuidv4();
     set((store) => ({
       instances: [
         ...store.instances,
@@ -124,7 +121,7 @@ const usePOSStore = create<POSStore>((set) => ({
     return id;
   },
   createPurchase(instanceId, items, total, paid) {
-    const id = generateId();
+    const id = uuidv4();
     set((store) => ({
       purchases: [
         ...store.purchases,
@@ -145,7 +142,7 @@ const usePOSStore = create<POSStore>((set) => ({
     return id;
   },
   createItem(instanceId, name, initialStock, price) {
-    const id = generateId();
+    const id = uuidv4();
     set((store) => ({
       items: [
         ...store.items,
