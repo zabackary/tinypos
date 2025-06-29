@@ -26,6 +26,7 @@ export default function HomeRoute() {
   const navigate = useNavigate();
 
   const createInstance = usePOSStore((store) => store.createInstance);
+  const setPin = usePOSStore((store) => store.setPin);
   const pin = usePOSStore((store) => store.pin);
   const reset = usePOSStore((store) => store.reset);
 
@@ -35,9 +36,15 @@ export default function HomeRoute() {
   };
 
   const [resetPinDialogOpen, setResetPinDialogOpen] = useState(false);
-  const [resetPinConfirmationOpen, setResetPinConfirmationOpen] =
-    useState(false);
+  const [resetConfirmationOpen, setResetConfirmationOpen] = useState(false);
 
+  const [setPinDialogOpen, setSetPinDialogOpen] = useState(false);
+  const [setPinInput, setSetPinInput] = useState("");
+  const [setPinConfirmInput, setSetPinConfirmInput] = useState("");
+  const [setPinPinDialogOpen, setSetPinPinDialogOpen] = useState(false);
+
+  const [instanceCreationPinDialogOpen, setInstanceCreationPinDialogOpen] =
+    useState(false);
   const [instanceCreationDialogOpen, setInstanceCreationDialogOpen] =
     useState(false);
   const [instanceCreationName, setInstanceCreationName] = useState("");
@@ -57,10 +64,25 @@ export default function HomeRoute() {
                 <MaterialSymbolIcon icon="reset_wrench" fill size={20} />
               }
               onClick={() => {
-                setResetPinConfirmationOpen(true);
+                setResetConfirmationOpen(true);
               }}
             >
               すべてをリーセット
+            </ResponsiveButton>
+            <ResponsiveButton
+              size="medium"
+              variant="tonal"
+              sx={{ ml: 1 }}
+              startIcon={<MaterialSymbolIcon icon="pin" fill size={20} />}
+              onClick={() => {
+                if (pin === null) {
+                  setSetPinDialogOpen(true);
+                } else {
+                  setSetPinPinDialogOpen(true);
+                }
+              }}
+            >
+              {pin === null ? "ピンを設定" : "ピンを変更"}
             </ResponsiveButton>
           </Toolbar>
         </AppBar>
@@ -122,7 +144,17 @@ export default function HomeRoute() {
               )}
             </Stack>
           </Section>
-          <Button size="large" variant="filled" onClick={handleNewInstance}>
+          <Button
+            size="large"
+            variant="filled"
+            onClick={() => {
+              if (pin !== null) {
+                setInstanceCreationPinDialogOpen(true);
+              } else {
+                handleNewInstance();
+              }
+            }}
+          >
             インスタンスを作成
           </Button>
         </Stack>
@@ -136,9 +168,26 @@ export default function HomeRoute() {
         }}
         actionLabel="リセット"
       />
+      <PinDialog
+        open={setPinPinDialogOpen}
+        info="現在のピンを入力してください。"
+        onCancel={() => setSetPinPinDialogOpen(false)}
+        onEnter={() => {
+          setSetPinPinDialogOpen(false);
+          setSetPinDialogOpen(true);
+        }}
+      />
+      <PinDialog
+        open={instanceCreationPinDialogOpen}
+        onCancel={() => setInstanceCreationPinDialogOpen(false)}
+        onEnter={() => {
+          setInstanceCreationPinDialogOpen(false);
+          handleNewInstance();
+        }}
+      />
       <Dialog
-        open={resetPinConfirmationOpen}
-        onClose={() => setResetPinConfirmationOpen(false)}
+        open={resetConfirmationOpen}
+        onClose={() => setResetConfirmationOpen(false)}
       >
         <DialogTitle>
           すべてのデータ（注文・入力した商品など）をリセットします
@@ -153,7 +202,7 @@ export default function HomeRoute() {
           <Button
             variant="tonal"
             onClick={() => {
-              setResetPinConfirmationOpen(false);
+              setResetConfirmationOpen(false);
             }}
           >
             キャンセル
@@ -166,7 +215,7 @@ export default function HomeRoute() {
               } else {
                 reset();
               }
-              setResetPinConfirmationOpen(false);
+              setResetConfirmationOpen(false);
             }}
           >
             {pin !== null ? "ピンを入力" : "リセット"}
@@ -209,6 +258,67 @@ export default function HomeRoute() {
             }}
           >
             作成
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={setPinDialogOpen}
+        disableRestoreFocus
+        onClose={() => setSetPinDialogOpen(false)}
+      >
+        <DialogTitle>ピンを設定</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="新しいピン"
+            type="password"
+            fullWidth
+            autoFocus
+            value={setPinInput}
+            onChange={(e) => setSetPinInput(e.target.value)}
+            sx={{ mt: 1 }}
+          />
+          <TextField
+            label="ピンの確認"
+            type="password"
+            fullWidth
+            value={setPinConfirmInput}
+            onChange={(e) => setSetPinConfirmInput(e.target.value)}
+            sx={{ mt: 1 }}
+            error={
+              setPinInput !== setPinConfirmInput &&
+              setPinConfirmInput.trim() !== ""
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="tonal"
+            onClick={() => {
+              setSetPinDialogOpen(false);
+            }}
+          >
+            キャンセル
+          </Button>
+          {pin !== null ? (
+            <Button
+              variant="tonal"
+              onClick={() => {
+                setPin(null);
+                setSetPinDialogOpen(false);
+              }}
+            >
+              ピンを削除
+            </Button>
+          ) : null}
+          <Button
+            variant="filled"
+            disabled={setPinInput.trim() === ""}
+            onClick={() => {
+              setPin(setPinInput);
+              setSetPinDialogOpen(false);
+            }}
+          >
+            設定
           </Button>
         </DialogActions>
       </Dialog>

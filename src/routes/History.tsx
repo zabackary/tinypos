@@ -15,6 +15,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
 import NotFound from "../components/NotFound";
 import OrderDialog from "../components/OrderDialog";
+import PinDialog from "../components/PinDialog";
 import Section from "../components/Section";
 import {
   useInstance,
@@ -83,6 +84,8 @@ export default function HistoryRoute() {
   const [selectedPurchaseId, setSelectedPurchaseId] = useState<string | null>(
     null
   );
+
+  const [pinDialogOpen, setPinDialogOpen] = useState(true);
 
   if (!instance) return <NotFound />;
 
@@ -164,6 +167,17 @@ export default function HistoryRoute() {
         }}
         open={itemDialogOpen}
         purchaseId={selectedPurchaseId ?? ""}
+      />
+      <PinDialog
+        open={pinDialogOpen}
+        closeIfNoPin
+        blur
+        onCancel={() => {
+          navigate("..");
+        }}
+        onEnter={() => {
+          setPinDialogOpen(false);
+        }}
       />
     </>
   );

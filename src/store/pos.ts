@@ -53,7 +53,7 @@ export interface POSStoreState {
 export interface POSStoreActions {
   reset(): void;
 
-  setPin(newPin: string): void;
+  setPin(newPin: string | null): void;
 
   createInstance(name: string): string;
   createPurchase(

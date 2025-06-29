@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
 import NotFound from "../components/NotFound";
+import PinDialog from "../components/PinDialog";
 import Section from "../components/Section";
 import { useInstance, useInstanceItems, useItemStock } from "../store/hooks";
 import usePOSStore, { type Item } from "../store/pos";
@@ -88,6 +89,8 @@ export default function EditItemsRoute() {
   const updateItem = usePOSStore((store) => store.updateItem);
   const createItem = usePOSStore((store) => store.createItem);
   const deleteItem = usePOSStore((store) => store.deleteItem);
+
+  const [pinDialogOpen, setPinDialogOpen] = useState(true);
 
   if (!instance) return <NotFound />;
 
@@ -255,6 +258,17 @@ export default function EditItemsRoute() {
           </Button>
         </DialogActions>
       </Dialog>
+      <PinDialog
+        open={pinDialogOpen}
+        closeIfNoPin
+        blur
+        onCancel={() => {
+          navigate("..");
+        }}
+        onEnter={() => {
+          setPinDialogOpen(false);
+        }}
+      />
     </>
   );
 }

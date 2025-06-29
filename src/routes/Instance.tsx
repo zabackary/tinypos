@@ -62,7 +62,7 @@ export default function InstanceRoute() {
             <Button
               variant="tonal"
               onClick={() => {
-                navigate(-1);
+                navigate("..");
               }}
             >
               <MaterialSymbolIcon icon="arrow_back" fill size={20} />

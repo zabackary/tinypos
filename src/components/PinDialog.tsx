@@ -7,13 +7,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import usePOSStore from "../store/pos";
 
 export interface PinDialogProps {
   open: boolean;
   info?: string;
   actionLabel?: string;
+  closeIfNoPin?: boolean;
+  blur?: boolean;
   onCancel: () => void;
   onEnter: () => void;
 }
@@ -22,17 +24,47 @@ export default function PinDialog({
   open,
   onCancel,
   onEnter,
+  closeIfNoPin = false,
+  blur = false,
   actionLabel,
   info,
 }: PinDialogProps) {
   const pin = usePOSStore((state) => state.pin);
   const [inputPin, setInputPin] = useState("");
 
+  useEffect(() => {
+    if (open) {
+      setInputPin("");
+      if (closeIfNoPin && pin === null) {
+        onEnter();
+      }
+    }
+  }, [open]);
+
   return (
-    <Dialog open={open} disableRestoreFocus>
+    <Dialog
+      open={closeIfNoPin && pin === null ? false : open}
+      disableRestoreFocus
+      slotProps={
+        blur
+          ? {
+              backdrop: {
+                sx: {
+                  backdropFilter: "blur(16px)",
+                },
+              },
+            }
+          : undefined
+      }
+    >
       <DialogTitle>ピンを入力</DialogTitle>
       <DialogContent>
         {info ? <Typography>{info}</Typography> : null}
+        {pin === null ? (
+          <Typography>
+            ピンが設定されていませんので、確認ボタンを押してください。
+          </Typography>
+        ) : null}
         <TextField
           sx={{ mt: 1 }}
           label="ピン"
@@ -50,7 +82,7 @@ export default function PinDialog({
         </Button>
         <Button
           variant="filled"
-          disabled={inputPin !== pin}
+          disabled={inputPin !== pin && pin !== null}
           onClick={() => {
             if (inputPin === pin) {
               onEnter();

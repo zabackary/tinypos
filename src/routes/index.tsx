@@ -1,4 +1,5 @@
 import type { RouteObject } from "react-router-dom";
+import NotFound from "../components/NotFound";
 import EditItemsRoute from "./EditItems";
 import HistoryRoute from "./History";
 import HomeRoute from "./Home";
@@ -7,6 +8,7 @@ import InstanceRoute from "./Instance";
 const routes = [
   {
     index: true,
+    errorElement: <NotFound />,
     element: <HomeRoute />,
   },
   {
