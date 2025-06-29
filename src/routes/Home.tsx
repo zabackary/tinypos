@@ -6,9 +6,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
-  Menu,
-  MenuItem,
   Stack,
   TextField,
   Toolbar,
@@ -18,6 +15,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InstanceButton from "../components/InstanceButton";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
+import PinDialog from "../components/PinDialog";
+import ResponsiveButton from "../components/ResponsiveButton";
 import Section from "../components/Section";
 import { useInstances } from "../store/hooks";
 import usePOSStore from "../store/pos";
@@ -35,7 +34,6 @@ export default function HomeRoute() {
     setInstanceCreationName("");
   };
 
-  const [resetPin, setResetPin] = useState("");
   const [resetPinDialogOpen, setResetPinDialogOpen] = useState(false);
   const [resetPinConfirmationOpen, setResetPinConfirmationOpen] =
     useState(false);
@@ -52,7 +50,7 @@ export default function HomeRoute() {
             <Typography variant="h6" sx={{ flexGrow: 1, px: 2 }}>
               tinyPOS
             </Typography>
-            <Button
+            <ResponsiveButton
               size="medium"
               variant="tonal"
               startIcon={
@@ -63,18 +61,17 @@ export default function HomeRoute() {
               }}
             >
               すべてをリーセット
-            </Button>
-            <IconButton sx={{ ml: 1 }}>
-              <MaterialSymbolIcon icon="more_vert" fill size={20} />
-              <Menu open={false}>
-                <MenuItem onClick={() => {}}>Action 1</MenuItem>
-                <MenuItem onClick={() => {}}>Action 2</MenuItem>
-              </Menu>
-            </IconButton>
+            </ResponsiveButton>
           </Toolbar>
         </AppBar>
-        <Stack direction="row" gap={2} flexGrow={1}>
-          <Section direction={"column"} flexGrow={1} alignItems="center">
+        <Stack direction="column" gap={2} flexGrow={1} alignItems="center">
+          <Section
+            direction={"column"}
+            flexGrow={1}
+            alignItems="center"
+            gap={2}
+            width="100%"
+          >
             <Typography textAlign="center" variant="h4" component="h1" mt={2}>
               インスタンスをお選びください
             </Typography>
@@ -124,48 +121,21 @@ export default function HomeRoute() {
                 </Stack>
               )}
             </Stack>
-            <Button size="large" variant="filled" onClick={handleNewInstance}>
-              インスタンスを作成
-            </Button>
           </Section>
+          <Button size="large" variant="filled" onClick={handleNewInstance}>
+            インスタンスを作成
+          </Button>
         </Stack>
       </Stack>
-      <Dialog
+      <PinDialog
         open={resetPinDialogOpen}
-        onClose={() => setResetPinDialogOpen(false)}
-      >
-        <DialogTitle>ピンを入力</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="ピン"
-            variant="outlined"
-            type="password"
-            fullWidth
-            value={resetPin}
-            sx={{ mt: 1 }}
-            onChange={(e) => setResetPin(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="tonal"
-            onClick={() => {
-              setResetPinDialogOpen(false);
-            }}
-          >
-            キャンセル
-          </Button>
-          <Button
-            variant="filled"
-            disabled={resetPin !== pin}
-            onClick={() => {
-              reset();
-            }}
-          >
-            リーセット
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onCancel={() => setResetPinDialogOpen(false)}
+        onEnter={() => {
+          reset();
+          setResetPinDialogOpen(false);
+        }}
+        actionLabel="リセット"
+      />
       <Dialog
         open={resetPinConfirmationOpen}
         onClose={() => setResetPinConfirmationOpen(false)}

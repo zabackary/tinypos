@@ -19,6 +19,7 @@ import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
 import NotFound from "../components/NotFound";
 import NumberPad from "../components/NumberPad";
 import PaymentColumn from "../components/PaymentColumn";
+import ResponsiveButton from "../components/ResponsiveButton";
 import Section from "../components/Section";
 import { useInstance, useInstanceItems } from "../store/hooks";
 import usePOSStore from "../store/pos";
@@ -66,7 +67,7 @@ export default function InstanceRoute() {
             >
               <MaterialSymbolIcon icon="arrow_back" fill size={20} />
             </Button>
-            <Button
+            <ResponsiveButton
               variant="tonal"
               sx={{ ml: 1 }}
               startIcon={<MaterialSymbolIcon icon="edit" fill size={20} />}
@@ -75,11 +76,11 @@ export default function InstanceRoute() {
               }}
             >
               編集
-            </Button>
+            </ResponsiveButton>
             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
               {instance.name}
             </Typography>
-            <Button
+            <ResponsiveButton
               variant="tonal"
               startIcon={<MaterialSymbolIcon icon="orders" fill size={20} />}
               onClick={() => {
@@ -87,8 +88,8 @@ export default function InstanceRoute() {
               }}
             >
               注文履歴
-            </Button>
-            <Button
+            </ResponsiveButton>
+            <ResponsiveButton
               variant="tonal"
               sx={{ ml: 1 }}
               startIcon={<MaterialSymbolIcon icon="delete" fill size={20} />}
@@ -99,7 +100,7 @@ export default function InstanceRoute() {
               }}
             >
               この注文を削除
-            </Button>
+            </ResponsiveButton>
           </Toolbar>
         </AppBar>
         <Stack direction="row" gap={2} flexGrow={1}>
@@ -108,7 +109,7 @@ export default function InstanceRoute() {
               direction={"row"}
               gap={2}
               flexGrow={1}
-              justifyContent="stretch"
+              justifyContent="center"
               alignContent="center"
               flexWrap={"wrap"}
             >
