@@ -31,25 +31,19 @@ export default function OrderDialog({
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
       <DialogTitle>{purchase.date}</DialogTitle>
       <DialogContent>
+        <Typography>
+          <List>
+            {purchase.items.map((item) => (
+              <ListItem key={item.itemId}>
+                <ListItemText
+                  primary={items.find((i) => i.id === item.itemId)?.name}
+                  secondary={`${item.quantity}個`}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Typography>
         <List>
-          <ListItem
-            sx={{
-              borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
-              mb: 1,
-              p: 2,
-            }}
-          >
-            <ListItemText
-              primary={purchase.items
-                .map(
-                  (item) =>
-                    `${items.find((i) => i.id === item.itemId)?.name} x${
-                      item.quantity
-                    }`
-                )
-                .join(", ")}
-            />
-          </ListItem>
           <ListItem
             secondaryAction={<Typography>{purchase.total}円</Typography>}
             sx={{

@@ -38,11 +38,6 @@ export interface Instance {
   date: string;
 }
 
-export interface InstanceStats {
-  purchases: number;
-  items: number;
-}
-
 export interface POSStoreState {
   pin: string | null;
   instances: Instance[];

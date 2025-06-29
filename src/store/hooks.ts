@@ -1,9 +1,15 @@
-import usePOSStore, {
-  type Instance,
-  type InstanceStats,
-  type Item,
-  type Purchase,
-} from "./pos";
+import usePOSStore, { type Instance, type Item, type Purchase } from "./pos";
+
+export interface InstanceStats {
+  purchases: number;
+  items: number;
+}
+
+export interface PurchasesStats {
+  totalCount: number;
+  totalRevenue: number;
+  averageRevenue: number;
+}
 
 export function useInstance(id: string): Instance | undefined {
   return usePOSStore((store) => store.instances).filter(
@@ -33,9 +39,13 @@ export function useItems(instanceId: string): string[] {
     .map((item) => item.id);
 }
 
-export function useItemInfos(instanceId: string): Item[] {
+export function useItemInfos(
+  instanceId: string,
+  includeDeleted: boolean = false
+): Item[] {
   return usePOSStore((store) => store.items).filter(
-    (item) => item.instanceId === instanceId && !item.deleted
+    (item) =>
+      item.instanceId === instanceId && (includeDeleted || !item.deleted)
   );
 }
 
@@ -83,6 +93,28 @@ export function useInstanceStats(id: string): InstanceStats | undefined {
     purchases: purchases.filter(
       (purchase) => purchase.instanceId === id && !purchase.deleted
     ).length,
+  };
+}
+
+export function usePurchasesStats(
+  instanceId: string
+): PurchasesStats | undefined {
+  const purchases = usePOSStore((store) => store.purchases).filter(
+    (purchase) => purchase.instanceId === instanceId && !purchase.deleted
+  );
+
+  if (purchases.length === 0) return undefined;
+
+  const totalRevenue = purchases.reduce(
+    (total, purchase) => total + purchase.total,
+    0
+  );
+  const averageRevenue = totalRevenue / purchases.length;
+
+  return {
+    totalCount: purchases.length,
+    totalRevenue,
+    averageRevenue,
   };
 }
 

@@ -36,7 +36,7 @@ export default function App() {
         }}
       >
         <Router />
-        <Stack direction="row">
+        <Stack direction="row" minHeight="min-content">
           <Typography
             flexGrow={1}
             color={theme.palette.onSurfaceVariant.main}
