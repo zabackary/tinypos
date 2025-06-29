@@ -17,6 +17,46 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
+      workbox: {
+        globPatterns: ["**/*"],
+      },
+      includeAssets: [
+        "**/*",
+      ],
+      manifest: {
+        theme_color: "#efa0ff",
+        "background_color": "#ffffff",
+        "display": "standalone",
+        "name": "tinyPOS",
+        "short_name": "tinyPOS",
+        "description": "小さなPOSシステム。",
+        "scope": "/tinypos",
+        "start_url": "/tinypos",
+        "icons": [
+          {
+            src: 'pwa-64x64.png',
+            sizes: '64x64',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any'  
+          },
+          {
+            src: 'maskable-icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
+          }
+        ]
+      }
     }),
   ],
 });
