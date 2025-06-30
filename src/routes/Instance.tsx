@@ -291,8 +291,9 @@ export default function InstanceRoute() {
             注文が保存されました
           </Typography>
           <Button
-            variant="filled"
-            color="primary"
+            variant="outlined"
+            color="error"
+            size="small"
             onClick={() => {
               if (lastPurchaseId) {
                 deletePurchase(lastPurchaseId);
