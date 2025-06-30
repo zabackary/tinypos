@@ -18,6 +18,7 @@ import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
 import PinDialog from "../components/PinDialog";
 import ResponsiveButton from "../components/ResponsiveButton";
 import Section from "../components/Section";
+import WelcomeDialog from "../components/WelcomeDialog";
 import { useInstances } from "../store/hooks";
 import usePOSStore from "../store/pos";
 
@@ -326,6 +327,7 @@ export default function HomeRoute() {
           </Button>
         </DialogActions>
       </Dialog>
+      <WelcomeDialog />
     </>
   );
 }

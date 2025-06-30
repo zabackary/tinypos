@@ -40,6 +40,7 @@ export interface Instance {
 
 export interface POSStoreState {
   pin: string | null;
+  hasSeenWelcome: boolean;
   instances: Instance[];
   items: Item[];
   purchases: Purchase[];
@@ -47,6 +48,8 @@ export interface POSStoreState {
 
 export interface POSStoreActions {
   reset(): void;
+
+  setHasSeenWelcome(hasSeen: boolean): void;
 
   setPin(newPin: string | null): void;
 
@@ -85,6 +88,7 @@ const usePOSStore = create<POSStore>((set) => ({
   instances: [],
   items: [],
   purchases: [],
+  hasSeenWelcome: false,
 
   reset() {
     set({
@@ -92,6 +96,7 @@ const usePOSStore = create<POSStore>((set) => ({
       instances: [],
       items: [],
       purchases: [],
+      // hasSeenWelcome: false, (we don't reset this to avoid showing the welcome screen again)
     });
   },
 
@@ -202,6 +207,12 @@ const usePOSStore = create<POSStore>((set) => ({
           ...store.items.slice(i + 1),
         ],
       };
+    });
+  },
+
+  setHasSeenWelcome(hasSeen: boolean): void {
+    set({
+      hasSeenWelcome: hasSeen,
     });
   },
 }));
