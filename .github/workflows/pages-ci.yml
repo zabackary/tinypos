@@ -1,8 +1,9 @@
 name: Deploy to Pages
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs on pushes targeting the default branch that match the tag pattern
   push:
+    tags: ["v*.*.*"]
     branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
