@@ -275,7 +275,7 @@ export default function HomeRoute() {
             autoFocus
             value={setPinInput}
             onChange={(e) => setSetPinInput(e.target.value)}
-            sx={{ mt: 1 }}
+            sx={{ my: 1 }}
           />
           <TextField
             label="ピンの確認"
@@ -283,7 +283,7 @@ export default function HomeRoute() {
             fullWidth
             value={setPinConfirmInput}
             onChange={(e) => setSetPinConfirmInput(e.target.value)}
-            sx={{ mt: 1 }}
+            sx={{ my: 1 }}
             error={
               setPinInput !== setPinConfirmInput &&
               setPinConfirmInput.trim() !== ""
@@ -312,7 +312,11 @@ export default function HomeRoute() {
           ) : null}
           <Button
             variant="filled"
-            disabled={setPinInput.trim() === ""}
+            disabled={
+              setPinInput.trim() === "" ||
+              setPinConfirmInput.trim() === "" ||
+              setPinInput !== setPinConfirmInput
+            }
             onClick={() => {
               setPin(setPinInput);
               setSetPinDialogOpen(false);
