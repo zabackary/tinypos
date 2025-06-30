@@ -67,7 +67,7 @@ export default function HomeRoute() {
                 setResetConfirmationOpen(true);
               }}
             >
-              すべてをリーセット
+              すべてをリセット
             </ResponsiveButton>
             <ResponsiveButton
               size="medium"
