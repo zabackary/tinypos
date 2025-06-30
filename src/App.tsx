@@ -48,7 +48,7 @@ export default function App() {
             color={theme.palette.onSurfaceVariant.main}
             variant="caption"
           >
-            made with ✝ and 💖 in japan &middot; github: @zabackary
+            made with ✝ and 💖 in japan &middot; github.com/zabackary
           </Typography>
         </Stack>
       </Stack>
