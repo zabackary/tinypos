@@ -31,18 +31,16 @@ export default function OrderDialog({
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
       <DialogTitle>{purchase.date}</DialogTitle>
       <DialogContent>
-        <Typography>
-          <List>
-            {purchase.items.map((item) => (
-              <ListItem key={item.itemId}>
-                <ListItemText
-                  primary={items.find((i) => i.id === item.itemId)?.name}
-                  secondary={`${item.quantity}個`}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Typography>
+        <List>
+          {purchase.items.map((item) => (
+            <ListItem key={item.itemId} disableGutters>
+              <ListItemText
+                primary={items.find((i) => i.id === item.itemId)?.name}
+                secondary={`${item.quantity}個`}
+              />
+            </ListItem>
+          ))}
+        </List>
         <List>
           <ListItem
             secondaryAction={<Typography>{purchase.total}円</Typography>}
@@ -66,7 +64,7 @@ export default function OrderDialog({
           </ListItem>
           <ListItem
             secondaryAction={
-              <Typography>{purchase.total - purchase.paid}円</Typography>
+              <Typography>{purchase.paid - purchase.total}円</Typography>
             }
             sx={{
               p: 2,
@@ -77,7 +75,7 @@ export default function OrderDialog({
         </List>
       </DialogContent>
       <DialogActions>
-        <Button variant="tonal" color="error" onClick={onDelete}>
+        <Button variant="outlined" color="error" onClick={onDelete}>
           削除
         </Button>
         <Button variant="filled" onClick={onClose}>
