@@ -17,7 +17,6 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
-      disable: true, // Currently disabled as a monkeypatch
       workbox: {
         globPatterns: ["**/*"],
       },
