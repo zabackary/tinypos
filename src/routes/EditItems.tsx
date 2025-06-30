@@ -4,6 +4,8 @@ import {
   Button,
   Dialog,
   DialogActions,
+  DialogContent,
+  DialogContentText,
   DialogTitle,
   List,
   ListItem,
@@ -91,6 +93,10 @@ export default function EditItemsRoute() {
   const deleteItem = usePOSStore((store) => store.deleteItem);
 
   const [pinDialogOpen, setPinDialogOpen] = useState(true);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [deleteConfirmationItemId, setDeleteConfirmationItemId] = useState<
+    string | null
+  >(null);
 
   if (!instance) return <NotFound />;
 
@@ -133,7 +139,8 @@ export default function EditItemsRoute() {
                     setNewItemInitialStock(item.initialStock);
                   }}
                   onDelete={() => {
-                    deleteItem(item.id);
+                    setDeleteConfirmationItemId(item.id);
+                    setDeleteConfirmationOpen(true);
                   }}
                 />
               ))}
@@ -252,6 +259,41 @@ export default function EditItemsRoute() {
             }
           >
             {newItemDialogId === null ? "追加" : "保存"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={deleteConfirmationOpen}
+        onClose={() => setDeleteConfirmationOpen(false)}
+      >
+        <DialogTitle>商品を削除</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            本当にこの商品を削除しますか？削除すると元に戻せませんが、この商品がある注文は削除されません。
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="tonal"
+            onClick={() => {
+              setDeleteConfirmationOpen(false);
+              setDeleteConfirmationItemId(null);
+            }}
+          >
+            キャンセル
+          </Button>
+          <Button
+            variant="filled"
+            color="error"
+            onClick={() => {
+              if (deleteConfirmationItemId) {
+                deleteItem(deleteConfirmationItemId);
+              }
+              setDeleteConfirmationOpen(false);
+              setDeleteConfirmationItemId(null);
+            }}
+          >
+            削除
           </Button>
         </DialogActions>
       </Dialog>
