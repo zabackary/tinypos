@@ -134,6 +134,7 @@ export default function InstanceRoute() {
                   }}
                   sx={{
                     flexGrow: 1,
+                    width: 220,
                   }}
                 />
               ))}
