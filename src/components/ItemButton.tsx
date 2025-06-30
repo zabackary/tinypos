@@ -6,6 +6,7 @@ import {
   Stack,
   Typography,
   useTheme,
+  type SxProps,
 } from "@mui/material";
 import { useItem, useItemStock } from "../store/hooks";
 
@@ -13,12 +14,14 @@ export interface ItemButtonProps {
   id: string;
   selectedCount: number;
   onClick: () => void;
+  sx?: SxProps;
 }
 
 export default function ItemButton({
   id,
   selectedCount,
   onClick,
+  sx = {},
 }: ItemButtonProps) {
   const item = useItem(id);
   const stock = useItemStock(id);
@@ -32,11 +35,11 @@ export default function ItemButton({
     <Card
       variant="outlined"
       sx={{
-        minWidth: "calc(50% - 8px)",
         bgcolor:
           selectedCount > 0 ? theme.palette.surfaceContainerHighest.main : null,
         opacity: disabled ? 0.5 : 1,
         transition: theme.transitions.create(["background-color", "opacity"]),
+        ...sx,
       }}
     >
       <CardActionArea onClick={onClick} disabled={disabled}>

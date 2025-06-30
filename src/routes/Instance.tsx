@@ -56,156 +56,165 @@ export default function InstanceRoute() {
 
   return (
     <>
-      <Stack direction="column" flexGrow={1} gap={2}>
-        <AppBar position="static" sx={{ backgroundColor: "transparent" }}>
-          <Toolbar sx={{ padding: "0 !important" }}>
-            <Button
-              variant="tonal"
-              onClick={() => {
-                navigate("..");
-              }}
-            >
-              <MaterialSymbolIcon icon="arrow_back" fill size={20} />
-            </Button>
-            <ResponsiveButton
-              variant="tonal"
-              sx={{ ml: 1 }}
-              startIcon={<MaterialSymbolIcon icon="edit" fill size={20} />}
-              onClick={() => {
-                navigate("edit");
-              }}
-            >
-              編集
-            </ResponsiveButton>
-            <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
-              {instance.name}
-            </Typography>
-            <ResponsiveButton
-              variant="tonal"
-              startIcon={<MaterialSymbolIcon icon="orders" fill size={20} />}
-              onClick={() => {
-                navigate("history");
-              }}
-            >
-              注文履歴
-            </ResponsiveButton>
-            <ResponsiveButton
-              variant="tonal"
-              sx={{ ml: 1 }}
-              startIcon={<MaterialSymbolIcon icon="delete" fill size={20} />}
-              onClick={() => {
-                setCurrentOrder({});
-                setPaidAmount("");
-                setDeletedSnackbarOpen(true);
-              }}
-            >
-              この注文を削除
-            </ResponsiveButton>
-          </Toolbar>
-        </AppBar>
-        <Stack direction="row" gap={2} flexGrow={1}>
-          <Section direction={"column"} flexGrow={1}>
-            <Stack
-              direction={"row"}
-              gap={2}
-              flexGrow={1}
-              justifyContent="center"
-              alignContent="center"
-              flexWrap={"wrap"}
-            >
-              {items.length > 0 ? (
-                items.map((item) => (
-                  <ItemButton
-                    key={item.id}
-                    id={item.id}
-                    selectedCount={currentOrder[item.id] || 0}
-                    onClick={() => {
-                      setCurrentOrder((prev) => ({
-                        ...prev,
-                        [item.id]: (prev[item.id] || 0) + 1,
-                      }));
-                    }}
-                  />
-                ))
-              ) : (
-                <Stack
-                  direction="column"
-                  alignItems="center"
-                  gap={1}
-                  justifyContent="center"
-                  flexGrow={1}
-                >
-                  <Box
-                    sx={{
-                      bgcolor: theme.palette.surfaceVariant.main,
-                      width: 64,
-                      height: 64,
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: 6,
-                    }}
-                  >
-                    <MaterialSymbolIcon icon="inventory_2" size={64} />
-                  </Box>
-                  <Typography variant="body1" textAlign="center">
-                    商品がありません。
-                  </Typography>
-                  <Typography variant="body2" textAlign="center">
-                    上の編集ボタンをクリックして商品を追加してください。
-                  </Typography>
-                </Stack>
-              )}
-            </Stack>
-          </Section>
-          <Section direction={"column"} justifyContent={"center"} flexGrow={0}>
-            <PaymentColumn
-              label={`合計 (${Object.values(currentOrder).reduce(
-                (a, b) => a + b,
-                0
-              )}品)`}
-              amount={total.toLocaleString("ja-JP")}
-            />
-            <PaymentColumn label="お預かり金" amount={paidAmount} isTyping />
-            <PaymentColumn
-              label="お釣り"
-              error={change < 0}
-              amount={change.toLocaleString("ja-JP")}
-            />
-          </Section>
-          <NumberPad
-            onNumberClick={(value) => {
-              setPaidAmount((prev) => `${prev}${value}`);
+      <AppBar position="static" sx={{ backgroundColor: "transparent" }}>
+        <Toolbar sx={{ padding: "0 !important" }}>
+          <Button
+            variant="tonal"
+            onClick={() => {
+              navigate("..");
             }}
-            onClear={() => setPaidAmount("")}
-            disabled={change < 0 || Object.keys(currentOrder).length === 0}
-            onSubmit={() => {
-              if (change < 0 || Object.keys(currentOrder).length === 0) return;
-              // Submit the purchase
-              setLastPurchaseId(
-                createPurchase(
-                  instance.id,
-                  Object.entries(currentOrder).map(([itemId, quantity]) => ({
-                    itemId,
-                    quantity,
-                  })),
-                  total,
-                  Number(paidAmount)
-                )
-              );
-              // Reset the order and paid amount
+          >
+            <MaterialSymbolIcon icon="arrow_back" fill size={20} />
+          </Button>
+          <ResponsiveButton
+            variant="tonal"
+            sx={{ ml: 1 }}
+            startIcon={<MaterialSymbolIcon icon="edit" fill size={20} />}
+            onClick={() => {
+              navigate("edit");
+            }}
+          >
+            編集
+          </ResponsiveButton>
+          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
+            {instance.name}
+          </Typography>
+          <ResponsiveButton
+            variant="tonal"
+            startIcon={<MaterialSymbolIcon icon="orders" fill size={20} />}
+            onClick={() => {
+              navigate("history");
+            }}
+          >
+            注文履歴
+          </ResponsiveButton>
+          <ResponsiveButton
+            variant="tonal"
+            sx={{ ml: 1 }}
+            startIcon={<MaterialSymbolIcon icon="delete" fill size={20} />}
+            onClick={() => {
               setCurrentOrder({});
               setPaidAmount("");
-
-              // Show the snackbar
-              setPurchaseSavedSnackbarOpen(true);
-              setTimeout(() => {
-                setPurchaseSavedSnackbarOpen(false);
-              }, 5000);
+              setDeletedSnackbarOpen(true);
             }}
+          >
+            この注文を削除
+          </ResponsiveButton>
+        </Toolbar>
+      </AppBar>
+      <Stack direction="row" gap={2} flexGrow={1} overflow="hidden">
+        <Section
+          direction="row"
+          gap={2}
+          flexGrow={1}
+          justifyContent="center"
+          flexWrap="wrap"
+          overflow="auto"
+        >
+          {items.length > 0 ? (
+            <Stack
+              flexGrow={1}
+              justifyContent="stretch"
+              flexWrap="wrap"
+              overflow="auto"
+              alignContent="center"
+              direction="row"
+              gap={2}
+            >
+              {items.map((item) => (
+                <ItemButton
+                  key={item.id}
+                  id={item.id}
+                  selectedCount={currentOrder[item.id] || 0}
+                  onClick={() => {
+                    setCurrentOrder((prev) => ({
+                      ...prev,
+                      [item.id]: (prev[item.id] || 0) + 1,
+                    }));
+                  }}
+                  sx={{
+                    flexGrow: 1,
+                  }}
+                />
+              ))}
+            </Stack>
+          ) : (
+            <Stack
+              direction="column"
+              alignItems="center"
+              gap={1}
+              justifyContent="center"
+              flexGrow={1}
+            >
+              <Box
+                sx={{
+                  bgcolor: theme.palette.surfaceVariant.main,
+                  width: 64,
+                  height: 64,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 6,
+                }}
+              >
+                <MaterialSymbolIcon icon="inventory_2" size={64} />
+              </Box>
+              <Typography variant="body1" textAlign="center">
+                商品がありません。
+              </Typography>
+              <Typography variant="body2" textAlign="center">
+                上の編集ボタンをクリックして商品を追加してください。
+              </Typography>
+            </Stack>
+          )}
+        </Section>
+        <Section direction={"column"} justifyContent={"center"} flexGrow={0}>
+          <PaymentColumn
+            label={`合計 (${Object.values(currentOrder).reduce(
+              (a, b) => a + b,
+              0
+            )}品)`}
+            amount={total.toLocaleString("ja-JP")}
           />
-        </Stack>
+          <PaymentColumn label="お預かり金" amount={paidAmount} isTyping />
+          <PaymentColumn
+            label="お釣り"
+            error={change < 0}
+            amount={change.toLocaleString("ja-JP")}
+          />
+        </Section>
+        <NumberPad
+          onNumberClick={(value) => {
+            setPaidAmount((prev) => `${prev}${value}`);
+          }}
+          onClear={() => setPaidAmount("")}
+          disabled={change < 0 || Object.keys(currentOrder).length === 0}
+          onSubmit={() => {
+            if (change < 0 || Object.keys(currentOrder).length === 0) return;
+            // Submit the purchase
+            setLastPurchaseId(
+              createPurchase(
+                instance.id,
+                Object.entries(currentOrder).map(([itemId, quantity]) => ({
+                  itemId,
+                  quantity,
+                })),
+                total,
+                Number(paidAmount)
+              )
+            );
+            // Reset the order and paid amount
+            setCurrentOrder({});
+            setPaidAmount("");
+
+            // Show the snackbar
+            setPurchaseSavedSnackbarOpen(true);
+            setTimeout(() => {
+              setPurchaseSavedSnackbarOpen(false);
+            }, 5000);
+          }}
+        />
       </Stack>
       <Snackbar
         open={deletedSnackbarOpen}

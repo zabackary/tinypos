@@ -153,112 +153,111 @@ export default function HistoryRoute() {
 
   return (
     <>
-      <Stack direction="column" flexGrow={1} gap={2} maxHeight="100%">
-        <AppBar position="static" sx={{ backgroundColor: "transparent" }}>
-          <Toolbar sx={{ padding: "0 !important" }}>
-            <Button
-              variant="tonal"
-              onClick={() => {
-                navigate(-1);
-              }}
-            >
-              <MaterialSymbolIcon icon="arrow_back" size={20} />
-            </Button>
-            <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
-              注文履歴
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Stack
-          direction="column"
-          gap={1}
-          flexGrow={1}
-          alignItems="center"
-          overflow="auto"
-        >
-          {stats ? (
+      <AppBar position="static" sx={{ backgroundColor: "transparent" }}>
+        <Toolbar sx={{ padding: "0 !important" }}>
+          <Button
+            variant="tonal"
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            <MaterialSymbolIcon icon="arrow_back" size={20} />
+          </Button>
+          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
+            注文履歴
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Stack
+        direction="column"
+        gap={1}
+        flexGrow={1}
+        alignItems="center"
+        overflow="auto"
+        borderRadius={4}
+      >
+        {stats ? (
+          <Stack
+            direction="row"
+            overflow="auto"
+            alignItems="stretch"
+            gap={1}
+            width="100%"
+            borderRadius={4}
+            minHeight="min-content"
+          >
+            <StatsCard
+              title="注文数"
+              value={`${stats.totalCount.toLocaleString()}件`}
+              icon="orders"
+            />
+            <StatsCard
+              title="平均注文の売上"
+              value={`${stats.averageRevenue.toLocaleString()}円`}
+              icon="inventory"
+            />
+            <StatsCard
+              title="売り上げ"
+              value={`${stats.totalRevenue.toLocaleString()}円`}
+              icon="money"
+            />
+          </Stack>
+        ) : null}
+        {purchases.length > 0 ? (
+          <List
+            sx={{
+              width: "100%",
+            }}
+            disablePadding
+          >
+            {purchases.map((purchase) => (
+              <PurchaseItem
+                key={purchase}
+                purchaseId={purchase}
+                onClick={() => {
+                  setSelectedPurchaseId(purchase);
+                  setItemDialogOpen(true);
+                }}
+                sx={{
+                  backgroundColor: theme.palette.surfaceContainerLowest.main,
+                }}
+              />
+            ))}
+          </List>
+        ) : (
+          <Section
+            direction={"column"}
+            flexGrow={1}
+            width="100%"
+            overflow="auto"
+          >
             <Stack
-              direction="row"
-              overflow="auto"
-              alignItems="stretch"
+              direction="column"
+              alignItems="center"
               gap={1}
-              width="100%"
-              borderRadius={4}
-              minHeight="min-content"
-            >
-              <StatsCard
-                title="注文数"
-                value={`${stats.totalCount.toLocaleString()}件`}
-                icon="orders"
-              />
-              <StatsCard
-                title="平均注文の売上"
-                value={`${stats.averageRevenue.toLocaleString()}円`}
-                icon="inventory"
-              />
-              <StatsCard
-                title="売り上げ"
-                value={`${stats.totalRevenue.toLocaleString()}円`}
-                icon="money"
-              />
-            </Stack>
-          ) : null}
-          {purchases.length > 0 ? (
-            <List
-              sx={{
-                width: "100%",
-              }}
-              disablePadding
-            >
-              {purchases.map((purchase) => (
-                <PurchaseItem
-                  key={purchase}
-                  purchaseId={purchase}
-                  onClick={() => {
-                    setSelectedPurchaseId(purchase);
-                    setItemDialogOpen(true);
-                  }}
-                  sx={{
-                    backgroundColor: theme.palette.surfaceContainerLowest.main,
-                  }}
-                />
-              ))}
-            </List>
-          ) : (
-            <Section
-              direction={"column"}
+              justifyContent="center"
               flexGrow={1}
-              width="100%"
-              overflow="auto"
             >
-              <Stack
-                direction="column"
-                alignItems="center"
-                gap={1}
-                justifyContent="center"
-                flexGrow={1}
+              <Box
+                sx={{
+                  bgcolor: theme.palette.surfaceVariant.main,
+                  width: 64,
+                  height: 64,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 6,
+                }}
               >
-                <Box
-                  sx={{
-                    bgcolor: theme.palette.surfaceVariant.main,
-                    width: 64,
-                    height: 64,
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: 6,
-                  }}
-                >
-                  <MaterialSymbolIcon icon="orders" size={64} />
-                </Box>
-                <Typography variant="body1" textAlign="center">
-                  注文がありません
-                </Typography>
-              </Stack>
-            </Section>
-          )}
-        </Stack>
+                <MaterialSymbolIcon icon="orders" size={64} />
+              </Box>
+              <Typography variant="body1" textAlign="center">
+                注文がありません
+              </Typography>
+            </Stack>
+          </Section>
+        )}
       </Stack>
       <OrderDialog
         onClose={() => setItemDialogOpen(false)}

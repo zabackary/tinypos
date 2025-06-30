@@ -107,7 +107,7 @@ export default function NumberPad({
       />
       <NumberButton
         color={theme.palette.tertiary}
-        content={<MaterialSymbolIcon icon="delete" size={28} />}
+        content={<MaterialSymbolIcon icon="backspace" size={28} />}
         onClick={() => onClear()}
       />
       <Button
