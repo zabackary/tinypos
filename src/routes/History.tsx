@@ -149,7 +149,7 @@ export default function HistoryRoute() {
     null
   );
 
-  const [pinDialogOpen, setPinDialogOpen] = useState(true);
+  const [deletePinDialogOpen, setDeletePinDialogOpen] = useState(false);
 
   const stats = usePurchasesStats(instance?.id ?? "");
 
@@ -288,22 +288,24 @@ export default function HistoryRoute() {
         onClose={() => setItemDialogOpen(false)}
         onDelete={() => {
           if (selectedPurchaseId) {
-            deletePurchase(selectedPurchaseId);
-            setItemDialogOpen(false);
+            setDeletePinDialogOpen(true);
           }
         }}
         open={itemDialogOpen}
         purchaseId={selectedPurchaseId ?? ""}
       />
       <PinDialog
-        open={pinDialogOpen}
+        open={deletePinDialogOpen}
         closeIfNoPin
-        blur
         onCancel={() => {
-          navigate("..");
+          setDeletePinDialogOpen(false);
         }}
         onEnter={() => {
-          setPinDialogOpen(false);
+          if (selectedPurchaseId) {
+            deletePurchase(selectedPurchaseId);
+            setItemDialogOpen(false);
+          }
+          setDeletePinDialogOpen(false);
         }}
       />
     </>
