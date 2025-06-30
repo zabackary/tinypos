@@ -96,91 +96,88 @@ export default function EditItemsRoute() {
 
   return (
     <>
-      <Stack direction="column" flexGrow={1} gap={2}>
-        <AppBar position="static" sx={{ backgroundColor: "transparent" }}>
-          <Toolbar sx={{ padding: "0 !important" }}>
-            <Button
-              variant="tonal"
-              startIcon={
-                <MaterialSymbolIcon icon="arrow_back" fill size={20} />
-              }
-              onClick={() => {
-                navigate(-1);
-              }}
-            >
-              保存
-            </Button>
-            <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
-              「{instance.name}」を編集中
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Stack direction="column" gap={2} flexGrow={1} alignItems="center">
-          <Section
-            direction={"column"}
-            flexGrow={1}
-            width="100%"
-            overflow="auto"
-          >
-            {items.length > 0 ? (
-              <List>
-                {items.map((item) => (
-                  <ItemItem
-                    key={item.id}
-                    item={item}
-                    onEdit={() => {
-                      setNewItemDialogId(item.id);
-                      setNewItemName(item.name);
-                      setNewItemPrice(item.price);
-                      setNewItemInitialStock(item.initialStock);
-                    }}
-                    onDelete={() => {
-                      deleteItem(item.id);
-                    }}
-                  />
-                ))}
-              </List>
-            ) : (
-              <Stack
-                direction="column"
-                alignItems="center"
-                gap={1}
-                justifyContent="center"
-                flexGrow={1}
-              >
-                <Box
-                  sx={{
-                    bgcolor: theme.palette.surfaceVariant.main,
-                    width: 64,
-                    height: 64,
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: 6,
-                  }}
-                >
-                  <MaterialSymbolIcon icon="inventory_2" size={64} />
-                </Box>
-                <Typography variant="body1" textAlign="center">
-                  商品がありません
-                </Typography>
-              </Stack>
-            )}
-          </Section>
+      <AppBar position="static" sx={{ backgroundColor: "transparent" }}>
+        <Toolbar sx={{ padding: "0 !important" }}>
           <Button
-            variant="filled"
-            size="large"
+            variant="tonal"
+            startIcon={<MaterialSymbolIcon icon="arrow_back" fill size={20} />}
             onClick={() => {
-              setNewItemDialogId(null);
-              setNewItemName("");
-              setNewItemPrice(0);
-              setNewItemInitialStock(0);
+              navigate(-1);
             }}
           >
-            商品を追加
+            保存
           </Button>
-        </Stack>
+          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
+            「{instance.name}」を編集中
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Stack
+        direction="column"
+        gap={2}
+        flexGrow={1}
+        alignItems="center"
+        overflow="auto"
+      >
+        <Section direction={"column"} flexGrow={1} width="100%" overflow="auto">
+          {items.length > 0 ? (
+            <List>
+              {items.map((item) => (
+                <ItemItem
+                  key={item.id}
+                  item={item}
+                  onEdit={() => {
+                    setNewItemDialogId(item.id);
+                    setNewItemName(item.name);
+                    setNewItemPrice(item.price);
+                    setNewItemInitialStock(item.initialStock);
+                  }}
+                  onDelete={() => {
+                    deleteItem(item.id);
+                  }}
+                />
+              ))}
+            </List>
+          ) : (
+            <Stack
+              direction="column"
+              alignItems="center"
+              gap={1}
+              justifyContent="center"
+              flexGrow={1}
+            >
+              <Box
+                sx={{
+                  bgcolor: theme.palette.surfaceVariant.main,
+                  width: 64,
+                  height: 64,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 6,
+                }}
+              >
+                <MaterialSymbolIcon icon="inventory_2" size={64} />
+              </Box>
+              <Typography variant="body1" textAlign="center">
+                商品がありません
+              </Typography>
+            </Stack>
+          )}
+        </Section>
+        <Button
+          variant="filled"
+          size="large"
+          onClick={() => {
+            setNewItemDialogId(null);
+            setNewItemName("");
+            setNewItemPrice(0);
+            setNewItemInitialStock(0);
+          }}
+        >
+          商品を追加
+        </Button>
       </Stack>
       <Dialog
         open={newItemDialogId !== undefined}

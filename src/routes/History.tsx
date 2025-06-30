@@ -86,6 +86,9 @@ function PurchaseItem({
               variant: "subtitle1",
             },
           }}
+          sx={{
+            m: 0,
+          }}
         />
         <MaterialSymbolIcon icon="arrow_right" />
       </ListItemButton>
