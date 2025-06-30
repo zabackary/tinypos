@@ -6,7 +6,7 @@ import {
   type PaletteColor,
   type SxProps,
 } from "@mui/material";
-import { useRef, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import MaterialSymbolIcon from "./MaterialSymbolIcon";
 
 function NumberButton({
@@ -23,20 +23,9 @@ function NumberButton({
   onClick: () => void;
 }) {
   const theme = useTheme();
-  const isTouch = useRef(false);
   return (
     <ButtonBase
-      onMouseDown={() => {
-        if (isTouch.current) {
-          isTouch.current = false;
-        } else {
-          onClick();
-        }
-      }}
-      onTouchStart={() => {
-        isTouch.current = true;
-        onClick();
-      }}
+      onClick={onClick}
       sx={{
         fontSize: 24,
         width,

@@ -1,12 +1,19 @@
-import { CssBaseline, Stack, ThemeProvider, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  CssBaseline,
+  Stack,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
 import {
   createM3Theme,
   theme as m3Theme,
   Variant,
 } from "mui-material-expressive";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import routes from "./routes";
+import { setupPersist } from "./store/persistStore";
 
 const router = createHashRouter(routes);
 const Router = memo(() => <RouterProvider router={router} />);
@@ -21,6 +28,15 @@ export default function App() {
       }),
     []
   );
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setupPersist().then(() => {
+      setLoading(false);
+    });
+  });
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline enableColorScheme />
@@ -35,7 +51,13 @@ export default function App() {
           e.stopPropagation();
         }}
       >
-        <Router />
+        {loading ? (
+          <Stack flexGrow={1} justifyContent="center" alignItems="center">
+            <CircularProgress />
+          </Stack>
+        ) : (
+          <Router />
+        )}
         <Stack direction="row" minHeight="min-content">
           <Typography
             flexGrow={1}
