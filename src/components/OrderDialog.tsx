@@ -41,7 +41,13 @@ export default function OrderDialog({
             </ListItem>
           ))}
         </List>
-        <List>
+        <List
+          sx={{
+            border: (theme) => `1px solid ${theme.palette.divider}`,
+            borderRadius: 4,
+          }}
+          disablePadding
+        >
           <ListItem
             secondaryAction={<Typography>{purchase.total}円</Typography>}
             sx={{
