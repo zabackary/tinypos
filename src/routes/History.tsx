@@ -20,6 +20,7 @@ import MaterialSymbolIcon, {
 import NotFound from "../components/NotFound";
 import OrderDialog from "../components/OrderDialog";
 import PinDialog from "../components/PinDialog";
+import ResponsiveButton from "../components/ResponsiveButton";
 import Section from "../components/Section";
 import {
   useInstance,
@@ -170,7 +171,7 @@ export default function HistoryRoute() {
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
             注文履歴
           </Typography>
-          <Button
+          <ResponsiveButton
             variant="tonal"
             startIcon={<MaterialSymbolIcon icon="download" />}
             onClick={() => {
@@ -190,7 +191,7 @@ export default function HistoryRoute() {
             }}
           >
             CSVダウンロード
-          </Button>
+          </ResponsiveButton>
         </Toolbar>
       </AppBar>
       <Stack
