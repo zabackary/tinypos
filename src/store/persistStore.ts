@@ -3,7 +3,7 @@ import usePOSStore, { type POSStoreState } from "./pos";
 const LOCALSTORAGE_KEY = "tiny-pos-storage";
 const ORIGIN_FS_FILE = "tiny-pos.json";
 
-export async function setupPersist() {
+export async function loadPersist() {
   const results = [loadFromLocalStorage(), await loadFromOriginFS()];
   let newest: StorageResult | null = null;
   for (const result of results) {
@@ -17,8 +17,15 @@ export async function setupPersist() {
     usePOSStore.setState(newest.state);
   }
 
-  // Set up saving
-  usePOSStore.subscribe((state, _prevState) => {
+  if (!(await navigator.storage.persist())) {
+    console.warn(
+      "Could not persist storage. Under storage pressure, the data may be deleted."
+    );
+  }
+}
+
+export function subscribePersist(): () => void {
+  return usePOSStore.subscribe((state, _prevState) => {
     persistToLocalStorage(state);
     // TODO: should we only flush to disk every once in a while?
     persistToOriginFS(state);
@@ -56,6 +63,11 @@ function loadFromLocalStorage(): StorageResult | null {
 }
 
 async function persistToOriginFS(state: POSStoreState) {
+  if (!navigator.storage || !navigator.storage.getDirectory) {
+    console.warn("Origin File System API is not available.");
+    return;
+  }
+
   const time = new Date();
   const dir = await navigator.storage.getDirectory();
   const fileHandle = await dir.getFileHandle(ORIGIN_FS_FILE, {

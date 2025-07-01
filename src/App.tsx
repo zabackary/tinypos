@@ -13,7 +13,7 @@ import {
 import { memo, useEffect, useMemo, useState } from "react";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import routes from "./routes";
-import { setupPersist } from "./store/persistStore";
+import { loadPersist, subscribePersist } from "./store/persistStore";
 
 const router = createHashRouter(routes);
 const Router = memo(() => <RouterProvider router={router} />);
@@ -32,10 +32,14 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setupPersist().then(() => {
+    loadPersist().then(() => {
       setLoading(false);
     });
-  });
+  }, []);
+
+  useEffect(() => {
+    return subscribePersist();
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>

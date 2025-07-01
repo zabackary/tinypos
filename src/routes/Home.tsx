@@ -1,4 +1,5 @@
 import {
+  Alert,
   AppBar,
   Box,
   Button,
@@ -11,7 +12,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InstanceButton from "../components/InstanceButton";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
@@ -50,6 +51,16 @@ export default function HomeRoute() {
     useState(false);
   const [instanceCreationName, setInstanceCreationName] = useState("");
 
+  const [needsPersistPermission, setNeedsPersistPermission] = useState(false);
+
+  useEffect(() => {
+    if ("storage" in navigator && "persist" in navigator.storage) {
+      navigator.storage.persist().then((persisted) => {
+        setNeedsPersistPermission(!persisted);
+      });
+    }
+  });
+
   return (
     <>
       <Stack direction="column" flexGrow={1} gap={2}>
@@ -87,6 +98,13 @@ export default function HomeRoute() {
             </ResponsiveButton>
           </Toolbar>
         </AppBar>
+        {needsPersistPermission ? (
+          <Alert severity="error">
+            <Typography variant="body1">
+              現在には、ストレージが足りなければ保存することができない場合がございますのでご注意ください。Chromeには、インストール後保存することができるようになります。
+            </Typography>
+          </Alert>
+        ) : null}
         <Stack direction="column" gap={2} flexGrow={1} alignItems="center">
           <Section
             direction={"column"}
