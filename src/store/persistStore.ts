@@ -3,11 +3,18 @@ import usePOSStore, { type POSStoreState } from "./pos";
 const LOCALSTORAGE_KEY = "tiny-pos-storage";
 const ORIGIN_FS_FILE = "tiny-pos.json";
 
+let hasLoaded = false;
+
 export async function loadPersist() {
   const results = [loadFromLocalStorage(), await loadFromOriginFS()];
   let newest: StorageResult | null = null;
   for (const result of results) {
-    if (result === null) continue;
+    if (
+      result === null ||
+      !result.state ||
+      !Array.isArray(result.state.instances)
+    )
+      continue;
     if (newest === null || result.time >= newest.time) {
       newest = result;
     }
@@ -16,6 +23,8 @@ export async function loadPersist() {
     console.info("Restored from", newest.source);
     usePOSStore.setState(newest.state);
   }
+
+  hasLoaded = true;
 
   if (!(await navigator.storage.persist())) {
     console.warn(
@@ -26,6 +35,10 @@ export async function loadPersist() {
 
 export function subscribePersist(): () => void {
   return usePOSStore.subscribe((state, _prevState) => {
+    if (!hasLoaded) {
+      // If we haven't loaded the persisted state yet, skip persisting
+      return;
+    }
     persistToLocalStorage(state);
     // TODO: should we only flush to disk every once in a while?
     persistToOriginFS(state);
