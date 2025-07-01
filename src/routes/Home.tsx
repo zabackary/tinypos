@@ -103,6 +103,9 @@ export default function HomeRoute() {
             <Typography variant="body1">
               現在には、ストレージが足りなければ保存することができない場合がございますのでご注意ください。Chromeには、インストール後保存することができるようになります。
             </Typography>
+            <Typography variant="body2">
+              ストレージが足りなくなければ、このアラートは無視しても問題ありません。
+            </Typography>
           </Alert>
         ) : null}
         <Stack direction="column" gap={2} flexGrow={1} alignItems="center">
