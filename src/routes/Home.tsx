@@ -53,6 +53,15 @@ export default function HomeRoute() {
 
   const [needsPersistPermission, setNeedsPersistPermission] = useState(false);
 
+  // Welcome dialog
+  const setHasSeenWelcome = usePOSStore((store) => store.setHasSeenWelcome);
+  const hasSeenWelcome = usePOSStore((store) => store.hasSeenWelcome);
+  const [welcomeOpen, setWelcomeOpen] = useState(() => !hasSeenWelcome);
+  const handleWelcomeClose = () => {
+    setHasSeenWelcome(true);
+    setWelcomeOpen(false);
+  };
+
   useEffect(() => {
     if ("storage" in navigator && "persist" in navigator.storage) {
       navigator.storage.persist().then((persisted) => {
@@ -95,6 +104,17 @@ export default function HomeRoute() {
               }}
             >
               {pin === null ? "ピンを設定" : "ピンを変更"}
+            </ResponsiveButton>
+            <ResponsiveButton
+              size="medium"
+              variant="tonal"
+              sx={{ ml: 1 }}
+              startIcon={<MaterialSymbolIcon icon="help" fill size={20} />}
+              onClick={() => {
+                setWelcomeOpen(true);
+              }}
+            >
+              ヘルプ
             </ResponsiveButton>
           </Toolbar>
         </AppBar>
@@ -355,7 +375,11 @@ export default function HomeRoute() {
           </Button>
         </DialogActions>
       </Dialog>
-      <WelcomeDialog />
+      <WelcomeDialog
+        open={welcomeOpen}
+        onClose={handleWelcomeClose}
+        headerIsHelp={hasSeenWelcome}
+      />
     </>
   );
 }

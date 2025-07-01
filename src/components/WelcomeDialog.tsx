@@ -7,25 +7,19 @@ import {
   DialogTitle,
   Link,
 } from "@mui/material";
-import { useState } from "react";
-import usePOSStore from "../store/pos";
 
-export default function WelcomeDialog({}: {}) {
-  const setHasSeenWelcome = usePOSStore((store) => store.setHasSeenWelcome);
-
-  const [open, setOpen] = useState(() => {
-    const hasSeenWelcome = usePOSStore.getState().hasSeenWelcome;
-    return !hasSeenWelcome;
-  });
-
-  const handleClose = () => {
-    setHasSeenWelcome(true);
-    setOpen(false);
-  };
-
+export default function WelcomeDialog({
+  headerIsHelp = false,
+  open,
+  onClose,
+}: {
+  headerIsHelp?: boolean;
+  open: boolean;
+  onClose: () => void;
+}) {
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
-      <DialogTitle>ようこそ</DialogTitle>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
+      <DialogTitle>{headerIsHelp ? "ヘルプ" : "ようこそ"}</DialogTitle>
       <DialogContent>
         <DialogContentText>
           このアプリは、「tinyPOS・小さなPOSシステム」です。「小さな」という意味は、シンプルな使い方や現金のみご利用いただけることを指します。
@@ -53,7 +47,7 @@ export default function WelcomeDialog({}: {}) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button variant="filled" onClick={handleClose}>
+        <Button variant="filled" onClick={onClose}>
           閉じる
         </Button>
       </DialogActions>
