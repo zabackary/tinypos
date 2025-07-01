@@ -54,7 +54,13 @@ interface StorageResult {
 function persistToLocalStorage(state: POSStoreState) {
   const serializedState = JSON.stringify({
     time: new Date().getTime(),
-    state,
+    state: {
+      instances: state.instances,
+      items: state.items,
+      purchases: state.purchases,
+      pin: state.pin,
+      hasSeenWelcome: state.hasSeenWelcome,
+    },
   });
   localStorage.setItem(LOCALSTORAGE_KEY, serializedState);
 }
@@ -93,7 +99,13 @@ async function persistToOriginFS(state: POSStoreState) {
   await writable.write(
     JSON.stringify({
       time: time.getTime(),
-      state,
+      state: {
+        instances: state.instances,
+        items: state.items,
+        purchases: state.purchases,
+        pin: state.pin,
+        hasSeenWelcome: state.hasSeenWelcome,
+      },
     })
   );
   // Close the file

@@ -38,6 +38,8 @@ export interface Instance {
   date: string;
 }
 
+// When updating this store, make sure to also update the
+// `persistStore.ts` to ensure the state is persisted correctly.
 export interface POSStoreState {
   pin: string | null;
   hasSeenWelcome: boolean;
@@ -79,6 +81,7 @@ export interface POSStoreActions {
 
   deletePurchase(id: string): void;
   deleteItem(id: string): void;
+  deleteInstance(id: string): void;
 }
 
 export type POSStore = POSStoreState & POSStoreActions;
@@ -213,6 +216,25 @@ const usePOSStore = create<POSStore>((set) => ({
   setHasSeenWelcome(hasSeen: boolean): void {
     set({
       hasSeenWelcome: hasSeen,
+    });
+  },
+
+  deleteInstance(id: string): void {
+    // Permanently delete the instance and all associated items and purchases
+    set((store) => {
+      const i = store.instances.findIndex((instance) => instance.id === id);
+      if (i === -1) return store; // Instance not found, do nothing
+
+      return {
+        instances: [
+          ...store.instances.slice(0, i),
+          ...store.instances.slice(i + 1),
+        ],
+        items: store.items.filter((item) => item.instanceId !== id),
+        purchases: store.purchases.filter(
+          (purchase) => purchase.instanceId !== id
+        ),
+      };
     });
   },
 }));

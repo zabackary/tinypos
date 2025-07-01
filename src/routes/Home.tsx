@@ -239,6 +239,13 @@ export default function HomeRoute() {
               }
               setResetConfirmationOpen(false);
             }}
+            sx={{
+              color: (theme) => theme.palette.onError.main,
+              backgroundColor: (theme) => theme.palette.error.main,
+              "&:hover": {
+                backgroundColor: (theme) => theme.palette.error.main,
+              },
+            }}
           >
             {pin !== null ? "ピンを入力" : "リセット"}
           </Button>

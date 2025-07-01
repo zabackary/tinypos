@@ -7,8 +7,11 @@ import InstanceRoute from "./Instance";
 
 const routes = [
   {
+    path: "*",
+    element: <NotFound />,
+  },
+  {
     index: true,
-    errorElement: <NotFound />,
     element: <HomeRoute />,
   },
   {

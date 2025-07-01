@@ -30,7 +30,7 @@ import {
   usePurchasesStats,
 } from "../store/hooks";
 import usePOSStore from "../store/pos";
-import { purchasesToCsv } from "../store/utils";
+import { downloadInstancesCsv } from "../store/utils";
 
 function PurchaseItem({
   purchaseId,
@@ -176,18 +176,7 @@ export default function HistoryRoute() {
             startIcon={<MaterialSymbolIcon icon="download" />}
             onClick={() => {
               // Download CSV of purchases
-              const text = purchasesToCsv(instance.id);
-              const blob = new Blob([text], { type: "text/csv" });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = `purchases-${
-                instance.name
-              }-${new Date().toISOString()}.csv`;
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-              URL.revokeObjectURL(url);
+              downloadInstancesCsv(instance.id);
             }}
           >
             CSVダウンロード

@@ -1,6 +1,21 @@
 import { stringify as csvStringify } from "csv-stringify/browser/esm/sync";
 import usePOSStore from "./pos";
 
+export function downloadInstancesCsv(instanceId: string): void {
+  const text = purchasesToCsv(instanceId);
+  const blob = new Blob([text], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `purchases-${
+    usePOSStore.getState().instances.find((i) => i.id === instanceId)?.name
+  }-${new Date().toISOString()}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 /**
  * Construct a CSV from the purchases in the form of:
  *
