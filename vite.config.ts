@@ -13,7 +13,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       strategies: "generateSW",
-      injectRegister: "script-defer",
+      injectRegister: null,
       devOptions: {
         enabled: true,
       },
