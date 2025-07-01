@@ -101,10 +101,10 @@ export default function HomeRoute() {
         {needsPersistPermission ? (
           <Alert severity="error">
             <Typography variant="body1">
-              現在には、ストレージが足りなければ保存することができない場合がございますのでご注意ください。Chromeには、インストール後保存することができるようになります。
+              現在、ストレージが足りなければ保存することができない場合がございますのでご注意ください。Chromeでは、インストール後に保存することができるようになります。
             </Typography>
             <Typography variant="body2">
-              ストレージが足りなくなければ、このアラートは無視しても問題ありません。
+              ストレージが十分なら、このアラートは無視しても問題ありません。
             </Typography>
           </Alert>
         ) : null}
