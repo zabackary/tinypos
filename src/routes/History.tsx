@@ -151,6 +151,7 @@ export default function HistoryRoute() {
   );
 
   const [deletePinDialogOpen, setDeletePinDialogOpen] = useState(false);
+  const [downloadPinDialogOpen, setDownloadPinDialogOpen] = useState(false);
 
   const stats = usePurchasesStats(instance?.id ?? "");
 
@@ -175,8 +176,7 @@ export default function HistoryRoute() {
             variant="tonal"
             startIcon={<MaterialSymbolIcon icon="download" />}
             onClick={() => {
-              // Download CSV of purchases
-              downloadInstancesCsv(instance.id);
+              setDownloadPinDialogOpen(true);
             }}
           >
             CSVダウンロード
@@ -296,6 +296,18 @@ export default function HistoryRoute() {
             setItemDialogOpen(false);
           }
           setDeletePinDialogOpen(false);
+        }}
+      />
+      <PinDialog
+        open={downloadPinDialogOpen}
+        info="データのCSVをダウンロードするには、PINを入力してください。"
+        closeIfNoPin
+        onCancel={() => {
+          setDownloadPinDialogOpen(false);
+        }}
+        onEnter={() => {
+          downloadInstancesCsv(instance.id);
+          setDownloadPinDialogOpen(false);
         }}
       />
     </>

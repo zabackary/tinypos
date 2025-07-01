@@ -56,6 +56,9 @@ export default function PinDialog({
             }
           : undefined
       }
+      onClose={() => {
+        onCancel();
+      }}
     >
       <DialogTitle>ピンを入力</DialogTitle>
       <DialogContent>
