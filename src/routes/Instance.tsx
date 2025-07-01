@@ -102,7 +102,15 @@ export default function InstanceRoute() {
           </ResponsiveButton>
         </Toolbar>
       </AppBar>
-      <Stack direction="row" gap={2} flexGrow={1} overflow="hidden">
+      <Stack
+        direction="row"
+        gap={2}
+        flexGrow={1}
+        sx={{
+          overflowY: "hidden",
+          minHeight: 500,
+        }}
+      >
         <Section
           direction="row"
           gap={2}
@@ -110,6 +118,7 @@ export default function InstanceRoute() {
           justifyContent="center"
           flexWrap="wrap"
           overflow="auto"
+          minWidth={200}
         >
           {items.length > 0 ? (
             <Stack
