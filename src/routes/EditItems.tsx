@@ -21,6 +21,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
 import NotFound from "../components/NotFound";
 import PinDialog from "../components/PinDialog";
+import ResponsiveButton from "../components/ResponsiveButton";
 import Section from "../components/Section";
 import { useInstance, useInstanceItems, useItemStock } from "../store/hooks";
 import usePOSStore, { type Item } from "../store/pos";
@@ -40,14 +41,14 @@ function ItemItem({
       key={item.id}
       secondaryAction={
         <>
-          <Button
+          <ResponsiveButton
             onClick={onEdit}
             startIcon={<MaterialSymbolIcon icon="edit" />}
             variant="outlined"
           >
             編集
-          </Button>
-          <Button
+          </ResponsiveButton>
+          <ResponsiveButton
             onClick={onDelete}
             startIcon={<MaterialSymbolIcon icon="delete" />}
             variant="outlined"
@@ -55,7 +56,7 @@ function ItemItem({
             sx={{ marginLeft: 1 }}
           >
             削除
-          </Button>
+          </ResponsiveButton>
         </>
       }
       sx={{
@@ -104,7 +105,7 @@ export default function EditItemsRoute() {
     <>
       <AppBar position="static" sx={{ backgroundColor: "transparent" }}>
         <Toolbar sx={{ padding: "0 !important" }}>
-          <Button
+          <ResponsiveButton
             variant="tonal"
             startIcon={<MaterialSymbolIcon icon="arrow_back" fill size={20} />}
             onClick={() => {
@@ -112,7 +113,7 @@ export default function EditItemsRoute() {
             }}
           >
             保存
-          </Button>
+          </ResponsiveButton>
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
             「{instance.name}」を編集中
           </Typography>
