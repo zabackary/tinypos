@@ -64,12 +64,12 @@ export default function InstanceRoute() {
               navigate("..");
             }}
           >
-            <MaterialSymbolIcon icon="arrow_back" fill size={20} />
+            <MaterialSymbolIcon icon="arrow_back" size={20} />
           </Button>
           <ResponsiveButton
             variant="tonal"
             sx={{ ml: 1 }}
-            startIcon={<MaterialSymbolIcon icon="edit" fill size={20} />}
+            startIcon={<MaterialSymbolIcon icon="edit" size={20} />}
             onClick={() => {
               navigate("edit");
             }}
@@ -81,7 +81,7 @@ export default function InstanceRoute() {
           </Typography>
           <ResponsiveButton
             variant="tonal"
-            startIcon={<MaterialSymbolIcon icon="orders" fill size={20} />}
+            startIcon={<MaterialSymbolIcon icon="orders" size={20} />}
             onClick={() => {
               navigate("history");
             }}
@@ -91,7 +91,7 @@ export default function InstanceRoute() {
           <ResponsiveButton
             variant="tonal"
             sx={{ ml: 1 }}
-            startIcon={<MaterialSymbolIcon icon="delete" fill size={20} />}
+            startIcon={<MaterialSymbolIcon icon="delete" size={20} />}
             onClick={() => {
               setCurrentOrder({});
               setPaidAmount("");

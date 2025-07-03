@@ -5,8 +5,8 @@ import App from "./App.tsx";
 
 registerSW({ immediate: true });
 
-import "@fontsource-variable/material-symbols-rounded"; // Material Symbols Rounded Variable
-import "@fontsource-variable/roboto-flex"; // Roboto Flex Variable
+import "@fontsource-variable/material-symbols-rounded/full"; // Material Symbols Rounded Variable
+import "@fontsource-variable/roboto-flex/full"; // Roboto Flex Variable
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

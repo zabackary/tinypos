@@ -81,9 +81,7 @@ export default function HomeRoute() {
             <ResponsiveButton
               size="medium"
               variant="tonal"
-              startIcon={
-                <MaterialSymbolIcon icon="reset_wrench" fill size={20} />
-              }
+              startIcon={<MaterialSymbolIcon icon="reset_wrench" size={20} />}
               onClick={() => {
                 setResetConfirmationOpen(true);
               }}
@@ -94,7 +92,9 @@ export default function HomeRoute() {
               size="medium"
               variant="tonal"
               sx={{ ml: 1 }}
-              startIcon={<MaterialSymbolIcon icon="pin" fill size={20} />}
+              startIcon={
+                <MaterialSymbolIcon icon="pin" size={20} fill={pin !== null} />
+              }
               onClick={() => {
                 if (pin === null) {
                   setSetPinDialogOpen(true);
@@ -109,7 +109,7 @@ export default function HomeRoute() {
               size="medium"
               variant="tonal"
               sx={{ ml: 1 }}
-              startIcon={<MaterialSymbolIcon icon="help" fill size={20} />}
+              startIcon={<MaterialSymbolIcon icon="help" size={20} />}
               onClick={() => {
                 setWelcomeOpen(true);
               }}
