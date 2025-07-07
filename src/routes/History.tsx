@@ -29,7 +29,7 @@ import {
   usePurchasesStats,
 } from "../store/hooks";
 import usePOSStore from "../store/pos";
-import { downloadInstancesCsv } from "../store/utils";
+import { downloadInstanceCsv } from "../store/utils";
 
 function PurchaseItem({
   purchaseId,
@@ -318,7 +318,7 @@ export default function HistoryRoute() {
           setDownloadPinDialogOpen(false);
         }}
         onEnter={() => {
-          downloadInstancesCsv(instance.id);
+          downloadInstanceCsv(instance.id);
           setDownloadPinDialogOpen(false);
         }}
       />

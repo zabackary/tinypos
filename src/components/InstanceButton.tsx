@@ -11,12 +11,13 @@ import {
   DialogTitle,
   Stack,
   Typography,
+  useMediaQuery,
   type SxProps,
 } from "@mui/material";
 import { useState } from "react";
 import { useInstance, useInstanceStats } from "../store/hooks";
 import usePOSStore from "../store/pos";
-import { downloadInstancesCsv } from "../store/utils";
+import { downloadInstanceCsv, exportInstance } from "../store/utils";
 import MaterialSymbolIcon from "./MaterialSymbolIcon";
 import PinDialog from "./PinDialog";
 
@@ -40,10 +41,13 @@ export default function InstanceButton({
     useState(false);
 
   const [downloadPinDialogOpen, setDownloadPinDialogOpen] = useState(false);
+  const [exportPinDialogOpen, setExportPinDialogOpen] = useState(false);
+
+  const smallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   return (
     <>
-      <Card variant="outlined" sx={{ minWidth: 300, ...sx }}>
+      <Card variant="outlined" sx={{ minWidth: 330, ...sx }}>
         <CardActionArea onClick={onClick}>
           <CardContent>
             <Stack
@@ -71,11 +75,16 @@ export default function InstanceButton({
             </Stack>
           </CardContent>
         </CardActionArea>
-        <CardActions>
+        <CardActions
+          sx={{
+            flexDirection: smallScreen ? "column" : undefined,
+          }}
+        >
           <Button
             size="small"
             startIcon={<MaterialSymbolIcon icon="delete" />}
             onClick={() => setConfirmDeleteDialogOpen(true)}
+            fullWidth={smallScreen}
           >
             削除
           </Button>
@@ -85,8 +94,19 @@ export default function InstanceButton({
             onClick={() => {
               setDownloadPinDialogOpen(true);
             }}
+            fullWidth={smallScreen}
           >
-            CSVダウンロード
+            CSVとしてDL
+          </Button>
+          <Button
+            size="small"
+            startIcon={<MaterialSymbolIcon icon="import_export" />}
+            onClick={() => {
+              setExportPinDialogOpen(true);
+            }}
+            fullWidth={smallScreen}
+          >
+            エクスポート
           </Button>
         </CardActions>
       </Card>
@@ -105,9 +125,21 @@ export default function InstanceButton({
         info="CSVをダウンロードするには、PINを入力してください。"
         closeIfNoPin
         onCancel={() => setDownloadPinDialogOpen(false)}
+        actionLabel="ダウンロード"
         onEnter={() => {
-          downloadInstancesCsv(id);
+          downloadInstanceCsv(id);
           setDownloadPinDialogOpen(false);
+        }}
+      />
+      <PinDialog
+        open={exportPinDialogOpen}
+        info="インスタンスをエクスポートするには、PINを入力してください。"
+        actionLabel="エクスポート"
+        closeIfNoPin
+        onCancel={() => setExportPinDialogOpen(false)}
+        onEnter={() => {
+          exportInstance(id);
+          setExportPinDialogOpen(false);
         }}
       />
       <Dialog

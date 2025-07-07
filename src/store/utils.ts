@@ -1,7 +1,7 @@
 import { stringify as csvStringify } from "csv-stringify/browser/esm/sync";
 import usePOSStore from "./pos";
 
-export function downloadInstancesCsv(instanceId: string): void {
+export function downloadInstanceCsv(instanceId: string): void {
   const text = purchasesToCsv(instanceId);
   const blob = new Blob([text], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
@@ -10,6 +10,37 @@ export function downloadInstancesCsv(instanceId: string): void {
   a.download = `purchases-${
     usePOSStore.getState().instances.find((i) => i.id === instanceId)?.name
   }-${new Date().toISOString()}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+export function exportInstance(instanceId: string): void {
+  const state = usePOSStore.getState();
+  const instance = state.instances.find((i) => i.id === instanceId);
+  if (!instance) {
+    console.error(`Instance with ID ${instanceId} not found.`);
+    return;
+  }
+  const items = state.items.filter((item) => item.instanceId === instanceId);
+  const purchases = state.purchases.filter(
+    (purchase) => purchase.instanceId === instanceId
+  );
+  const data = {
+    instance,
+    items,
+    purchases,
+  };
+  const blob = new Blob([JSON.stringify(data)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${
+    instance.name
+  }-${new Date().toISOString()}.tinyposinstance.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
