@@ -65,7 +65,9 @@ export default function ErrorPage({
         <Stack direction="row" gap={1} alignItems="center">
           <Button
             onClick={() => {
-              navigate("/");
+              navigate("/", {
+                viewTransition: true,
+              });
             }}
             variant="filled"
           >
@@ -134,8 +136,12 @@ export default function ErrorPage({
           anchorEl={dropdownRef?.current}
           anchorReference="anchorEl"
           anchorOrigin={{
-            horizontal: "left",
+            horizontal: "right",
             vertical: "bottom",
+          }}
+          transformOrigin={{
+            horizontal: "right",
+            vertical: "top",
           }}
           open={expanded}
           onClose={() => {
