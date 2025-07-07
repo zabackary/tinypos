@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import MaterialSymbolIcon from "../MaterialSymbolIcon";
 
 interface ErrorPageProps {
@@ -40,6 +41,8 @@ export default function ErrorPage({
 
   const dropdownRef = useRef(null);
 
+  const navigate = useNavigate();
+
   return (
     <>
       <Stack
@@ -62,7 +65,7 @@ export default function ErrorPage({
         <Stack direction="row" gap={1} alignItems="center">
           <Button
             onClick={() => {
-              // navigate("/");
+              navigate("/");
             }}
             variant="filled"
           >

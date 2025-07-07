@@ -8,6 +8,7 @@ import {
   useTheme,
   type SxProps,
 } from "@mui/material";
+import { useViewTransitionState } from "react-router-dom";
 import { useItem, useItemStock } from "../store/hooks";
 
 export interface ItemButtonProps {
@@ -26,6 +27,9 @@ export default function ItemButton({
   const item = useItem(id);
   const stock = useItemStock(id);
   const theme = useTheme();
+  const isTransitioningEditItems = useViewTransitionState(
+    `/${item?.instanceId}/edit`
+  );
 
   if (!item || stock === undefined) return null;
 
@@ -45,7 +49,17 @@ export default function ItemButton({
       <CardActionArea onClick={onClick} disabled={disabled}>
         <CardContent>
           <Stack direction="row" justifyContent="center" alignItems="center">
-            <Typography variant="h4" component="div" textAlign="center" my={2}>
+            <Typography
+              variant="h4"
+              component="div"
+              textAlign="center"
+              my={2}
+              sx={{
+                viewTransitionName: isTransitioningEditItems
+                  ? `instance-${item.instanceId}-item-${item.id}-name`
+                  : "none",
+              }}
+            >
               {item.name}
             </Typography>
             <Box
@@ -80,7 +94,27 @@ export default function ItemButton({
             </Box>
           </Stack>
           <Typography variant="body2" textAlign="center">
-            {item.price}円 &middot; {stock}個
+            <Box
+              component="span"
+              sx={{
+                viewTransitionName: isTransitioningEditItems
+                  ? `instance-${item.instanceId}-item-${item.id}-price`
+                  : "none",
+              }}
+            >
+              {item.price}円
+            </Box>{" "}
+            &middot;{" "}
+            <Box
+              component="span"
+              sx={{
+                viewTransitionName: isTransitioningEditItems
+                  ? `instance-${item.instanceId}-item-${item.id}-stock`
+                  : "none",
+              }}
+            >
+              {stock}個
+            </Box>
           </Typography>
         </CardContent>
       </CardActionArea>

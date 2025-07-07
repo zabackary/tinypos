@@ -11,6 +11,7 @@ import {
   DialogTitle,
   Stack,
   Typography,
+  type SxProps,
 } from "@mui/material";
 import { useState } from "react";
 import { useInstance, useInstanceStats } from "../store/hooks";
@@ -22,9 +23,14 @@ import PinDialog from "./PinDialog";
 export interface InstanceButtonProps {
   id: string;
   onClick: () => void;
+  sx: SxProps;
 }
 
-export default function InstanceButton({ id, onClick }: InstanceButtonProps) {
+export default function InstanceButton({
+  id,
+  onClick,
+  sx,
+}: InstanceButtonProps) {
   const instance = useInstance(id);
   const instanceStats = useInstanceStats(id);
   const deleteInstance = usePOSStore((store) => store.deleteInstance);
@@ -37,7 +43,7 @@ export default function InstanceButton({ id, onClick }: InstanceButtonProps) {
 
   return (
     <>
-      <Card variant="outlined" sx={{ minWidth: 300 }}>
+      <Card variant="outlined" sx={{ minWidth: 300, ...sx }}>
         <CardActionArea onClick={onClick}>
           <CardContent>
             <Stack

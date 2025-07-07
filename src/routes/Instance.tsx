@@ -13,7 +13,11 @@ import {
   useTheme,
 } from "@mui/material";
 import { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useViewTransitionState,
+} from "react-router-dom";
 import ItemButton from "../components/ItemButton";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
 import NotFound from "../components/NotFound";
@@ -52,6 +56,13 @@ export default function InstanceRoute() {
 
   const [lastPurchaseId, setLastPurchaseId] = useState<string | null>(null);
 
+  const isTransitioningEditItems = useViewTransitionState(
+    `/${instance?.id}/edit`
+  );
+  const isTransitioningHistory = useViewTransitionState(
+    `/${instance?.id}/history`
+  );
+
   if (!instance) return <NotFound />;
 
   return (
@@ -61,7 +72,9 @@ export default function InstanceRoute() {
           <ResponsiveButton
             variant="tonal"
             onClick={() => {
-              navigate("..");
+              navigate("..", {
+                viewTransition: true,
+              });
             }}
             startIcon={<MaterialSymbolIcon icon="arrow_back" />}
             alwaysCollapse
@@ -73,7 +86,9 @@ export default function InstanceRoute() {
             sx={{ ml: 1 }}
             startIcon={<MaterialSymbolIcon icon="edit" />}
             onClick={() => {
-              navigate("edit");
+              navigate("edit", {
+                viewTransition: true,
+              });
             }}
             collapsedVariant="text"
           >
@@ -86,7 +101,9 @@ export default function InstanceRoute() {
             variant="tonal"
             startIcon={<MaterialSymbolIcon icon="orders" />}
             onClick={() => {
-              navigate("history");
+              navigate("history", {
+                viewTransition: true,
+              });
             }}
             collapsedVariant="text"
           >
@@ -114,6 +131,7 @@ export default function InstanceRoute() {
         sx={{
           overflowY: "hidden",
           minHeight: 500,
+          viewTransitionName: `instance-${instance.id}`,
         }}
       >
         <Section
@@ -124,6 +142,12 @@ export default function InstanceRoute() {
           flexWrap="wrap"
           overflow="auto"
           minWidth={200}
+          sx={{
+            viewTransitionName:
+              isTransitioningEditItems || isTransitioningHistory
+                ? `instance-${instance.id}-items`
+                : "none",
+          }}
         >
           {items.length > 0 ? (
             <Stack
@@ -171,11 +195,24 @@ export default function InstanceRoute() {
                   alignItems: "center",
                   justifyContent: "center",
                   padding: 6,
+                  viewTransitionName:
+                    isTransitioningEditItems || isTransitioningHistory
+                      ? `instance-${instance.id}-empty-state-icon`
+                      : "none",
                 }}
               >
                 <MaterialSymbolIcon icon="inventory_2" size={64} />
               </Box>
-              <Typography variant="body1" textAlign="center">
+              <Typography
+                variant="body1"
+                textAlign="center"
+                sx={{
+                  viewTransitionName:
+                    isTransitioningEditItems || isTransitioningHistory
+                      ? `instance-${instance.id}-empty-state-text`
+                      : "none",
+                }}
+              >
                 商品がありません。
               </Typography>
               <Typography variant="body2" textAlign="center">

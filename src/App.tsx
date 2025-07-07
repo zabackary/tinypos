@@ -62,7 +62,13 @@ export default function App() {
         ) : (
           <Router />
         )}
-        <Stack direction="row" minHeight="min-content">
+        <Stack
+          direction="row"
+          minHeight="min-content"
+          sx={{
+            viewTransitionName: "footer",
+          }}
+        >
           <Typography
             flexGrow={1}
             color={theme.palette.onSurfaceVariant.main}

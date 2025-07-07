@@ -153,9 +153,14 @@ export default function HomeRoute() {
                   <InstanceButton
                     id={instance}
                     onClick={() => {
-                      navigate(`/${instance}`);
+                      navigate(`/${instance}`, {
+                        viewTransition: true,
+                      });
                     }}
                     key={instance}
+                    sx={{
+                      viewTransitionName: `instance-${instance}`,
+                    }}
                   />
                 ))
               ) : (
@@ -304,7 +309,9 @@ export default function HomeRoute() {
             onClick={() => {
               const id = createInstance(instanceCreationName);
               setInstanceCreationDialogOpen(false);
-              navigate(`/${id}`);
+              navigate(`/${id}`, {
+                viewTransition: true,
+              });
             }}
           >
             作成

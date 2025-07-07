@@ -64,8 +64,38 @@ function ItemItem({
       }}
     >
       <ListItemText
-        primary={item.name}
-        secondary={`価格: ${item.price.toLocaleString()}円, 初期在庫: ${item.initialStock.toLocaleString()}個, 現在の在庫: ${stock}`}
+        primary={
+          <Box
+            component="span"
+            sx={{
+              viewTransitionName: `instance-${item.instanceId}-item-${item.id}-name`,
+            }}
+          >
+            {item.name}
+          </Box>
+        }
+        secondary={
+          <>
+            価格:{" "}
+            <Box
+              component="span"
+              sx={{
+                viewTransitionName: `instance-${item.instanceId}-item-${item.id}-price`,
+              }}
+            >
+              {item.price.toLocaleString()}円
+            </Box>
+            , 初期在庫: {item.initialStock.toLocaleString()}個, 現在の在庫:{" "}
+            <Box
+              component="span"
+              sx={{
+                viewTransitionName: `instance-${item.instanceId}-item-${item.id}-stock`,
+              }}
+            >
+              {stock}
+            </Box>
+          </>
+        }
       />
     </ListItem>
   );
@@ -126,7 +156,15 @@ export default function EditItemsRoute() {
         alignItems="center"
         overflow="auto"
       >
-        <Section direction={"column"} flexGrow={1} width="100%" overflow="auto">
+        <Section
+          direction={"column"}
+          flexGrow={1}
+          width="100%"
+          overflow="auto"
+          sx={{
+            viewTransitionName: `instance-${instance.id}-items`,
+          }}
+        >
           {items.length > 0 ? (
             <List>
               {items.map((item) => (
@@ -164,11 +202,18 @@ export default function EditItemsRoute() {
                   alignItems: "center",
                   justifyContent: "center",
                   padding: 6,
+                  viewTransitionName: `instance-${instance.id}-empty-state-icon`,
                 }}
               >
                 <MaterialSymbolIcon icon="inventory_2" size={64} />
               </Box>
-              <Typography variant="body1" textAlign="center">
+              <Typography
+                variant="body1"
+                textAlign="center"
+                sx={{
+                  viewTransitionName: `instance-${instance.id}-empty-state-text`,
+                }}
+              >
                 商品がありません
               </Typography>
             </Stack>

@@ -192,6 +192,9 @@ export default function HistoryRoute() {
         alignItems="center"
         overflow="auto"
         borderRadius={4}
+        sx={{
+          viewTransitionName: `instance-${instance.id}-items`,
+        }}
       >
         {stats ? (
           <Stack
@@ -265,11 +268,18 @@ export default function HistoryRoute() {
                   alignItems: "center",
                   justifyContent: "center",
                   padding: 6,
+                  viewTransitionName: `instance-${instance.id}-empty-state-icon`,
                 }}
               >
                 <MaterialSymbolIcon icon="orders" size={64} />
               </Box>
-              <Typography variant="body1" textAlign="center">
+              <Typography
+                variant="body1"
+                textAlign="center"
+                sx={{
+                  viewTransitionName: `instance-${instance.id}-empty-state-text`,
+                }}
+              >
                 注文がありません
               </Typography>
             </Stack>

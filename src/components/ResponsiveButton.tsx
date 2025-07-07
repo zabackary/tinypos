@@ -30,7 +30,7 @@ export default function ResponsiveButton({
           ...sx,
         }}
         variant={resolvedCollapsedVariant}
-        centerRipple={true}
+        centerRipple={smallScreen}
       >
         {startIcon}
       </Button>
