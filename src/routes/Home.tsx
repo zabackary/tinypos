@@ -3,16 +3,22 @@ import {
   AppBar,
   Box,
   Button,
+  ButtonGroup,
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
   DialogTitle,
+  Menu,
+  MenuItem,
   Stack,
   TextField,
   Toolbar,
+  Tooltip,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InstanceButton from "../components/InstanceButton";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
@@ -22,6 +28,7 @@ import Section from "../components/Section";
 import WelcomeDialog from "../components/WelcomeDialog";
 import { useInstances } from "../store/hooks";
 import usePOSStore from "../store/pos";
+import { importInstance, InstanceImportError } from "../store/utils";
 
 export default function HomeRoute() {
   const instances = useInstances();
@@ -69,6 +76,15 @@ export default function HomeRoute() {
       });
     }
   });
+
+  // Import
+  const importDropdownRef = useRef<HTMLButtonElement>(null);
+  const [importDropdownExpanded, setImportDropdownExpanded] = useState(false);
+  const [importPinDialogOpen, setImportPinDialogOpen] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [importErrorDialogOpen, setImportErrorDialogOpen] = useState(false);
+
+  const smallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   return (
     <>
@@ -192,19 +208,92 @@ export default function HomeRoute() {
               )}
             </Stack>
           </Section>
-          <Button
-            size="large"
-            variant="filled"
-            onClick={() => {
-              if (pin !== null) {
-                setInstanceCreationPinDialogOpen(true);
-              } else {
-                handleNewInstance();
-              }
+          <ButtonGroup variant="filled" size="large">
+            <Button
+              onClick={() => {
+                if (pin !== null) {
+                  setInstanceCreationPinDialogOpen(true);
+                } else {
+                  handleNewInstance();
+                }
+              }}
+              sx={{
+                borderTopRightRadius: "16px !important",
+                borderBottomRightRadius: "16px !important",
+                "&:active": {
+                  borderTopLeftRadius: "50px !important",
+                  borderBottomLeftRadius: "50px !important",
+                  borderTopRightRadius: "8px !important",
+                  borderBottomRightRadius: "8px !important",
+                },
+                px: smallScreen ? 4 : undefined,
+              }}
+            >
+              インスタンスを作成
+            </Button>
+            <Tooltip title="もっと見る">
+              <Button
+                onClick={() => {
+                  setImportDropdownExpanded((prev) => !prev);
+                }}
+                sx={{
+                  ml: 0.5,
+                  borderTopLeftRadius: importDropdownExpanded
+                    ? "50px !important"
+                    : "16px !important",
+                  borderBottomLeftRadius: importDropdownExpanded
+                    ? "50px !important"
+                    : "16px !important",
+                  "&:active": {
+                    borderTopLeftRadius: importDropdownExpanded
+                      ? "32px !important"
+                      : "32px !important",
+                    borderBottomLeftRadius: importDropdownExpanded
+                      ? "32px !important"
+                      : "32px !important",
+                    borderTopRightRadius: "50px !important",
+                    borderBottomRightRadius: "50px !important",
+                  },
+                  px: smallScreen ? 2 : 3,
+                }}
+                ref={importDropdownRef}
+              >
+                <MaterialSymbolIcon
+                  icon="arrow_drop_down"
+                  sx={{
+                    transform: importDropdownExpanded
+                      ? "rotate(180deg)"
+                      : "none",
+                    transition: (theme) =>
+                      theme.transitions.create("transform"),
+                  }}
+                  size={36}
+                />
+              </Button>
+            </Tooltip>
+          </ButtonGroup>
+          <Menu
+            anchorEl={importDropdownRef.current}
+            open={importDropdownExpanded}
+            transformOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
             }}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            onClose={() => setImportDropdownExpanded(false)}
           >
-            インスタンスを作成
-          </Button>
+            <MenuItem
+              onClick={() => {
+                setImportDropdownExpanded(false);
+                setImportPinDialogOpen(true);
+              }}
+            >
+              インスタンスをインポート
+            </MenuItem>
+          </Menu>
         </Stack>
       </Stack>
       <PinDialog
@@ -380,6 +469,54 @@ export default function HomeRoute() {
             }}
           >
             設定
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <PinDialog
+        open={importPinDialogOpen}
+        info="インポートするには、PINを入力してください。"
+        closeIfNoPin
+        onCancel={() => setImportPinDialogOpen(false)}
+        actionLabel="インポート"
+        onEnter={() => {
+          setImportPinDialogOpen(false);
+          importInstance()
+            .then((id) => {
+              navigate(`/${id}`, {
+                viewTransition: true,
+              });
+            })
+            .catch((error) => {
+              console.error("Failed to import instance:", error);
+              if (error instanceof InstanceImportError) {
+                setImportError(error.humanMessage);
+                setImportErrorDialogOpen(true);
+              } else {
+                setImportError("コンソールを確認してください。");
+                setImportErrorDialogOpen(true);
+              }
+            });
+        }}
+      />
+      <Dialog
+        open={importErrorDialogOpen}
+        onClose={() => setImportErrorDialogOpen(false)}
+      >
+        <DialogTitle>インポートエラー</DialogTitle>
+        <DialogContent>
+          <DialogContentText variant="body1">
+            インポート中にエラーが発生しました。
+          </DialogContentText>
+          <DialogContentText variant="body2" mt={1}>
+            {importError}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="filled"
+            onClick={() => setImportErrorDialogOpen(false)}
+          >
+            閉じる
           </Button>
         </DialogActions>
       </Dialog>

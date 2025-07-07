@@ -40,6 +40,7 @@ export interface Instance {
 
 // When updating this store, make sure to also update the
 // `persistStore.ts` to ensure the state is persisted correctly.
+export const EXPORT_STATE_VERSION = 1;
 export interface POSStoreState {
   pin: string | null;
   hasSeenWelcome: boolean;

@@ -1,5 +1,5 @@
 import { stringify as csvStringify } from "csv-stringify/browser/esm/sync";
-import usePOSStore from "./pos";
+import usePOSStore, { EXPORT_STATE_VERSION } from "./pos";
 
 export function downloadInstanceCsv(instanceId: string): void {
   const text = purchasesToCsv(instanceId);
@@ -31,6 +31,7 @@ export function exportInstance(instanceId: string): void {
     instance,
     items,
     purchases,
+    stateVersion: EXPORT_STATE_VERSION,
   };
   const blob = new Blob([JSON.stringify(data)], {
     type: "application/json",
@@ -45,6 +46,93 @@ export function exportInstance(instanceId: string): void {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+export class InstanceImportError extends Error {
+  humanMessage: string;
+  constructor(message: string, humanMessage: string) {
+    super(message);
+    this.humanMessage = humanMessage;
+    this.name = "InstanceImportError";
+  }
+}
+
+const versionMappings: Record<number, (state: any) => any> = {
+  1: (state: any) => {
+    // Migrate from version 1 to 1
+    return state;
+  },
+};
+
+export async function importInstance(): Promise<string> {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json";
+  input.click();
+  const id = await new Promise<string>((resolve, reject) => {
+    input.onchange = async (event) => {
+      const target = event.target as HTMLInputElement;
+      if (target.files && target.files.length > 0) {
+        const file = target.files[0];
+        const text = await file.text();
+        try {
+          let data = JSON.parse(text);
+          const state = usePOSStore.getState();
+          // Migrate the state
+          data = versionMappings[data.stateVersion as number](data);
+          // Check if the instance already exists
+          const existingInstance = state.instances.find(
+            (i) => i.id === data.instance.id
+          );
+          if (existingInstance) {
+            reject(
+              new InstanceImportError(
+                `Instance with ID ${data.instance.id} already exists.`,
+                `このインスタンスはもう存在します。削除してからまた試してください。`
+              )
+            );
+            return;
+          }
+          usePOSStore.setState((state) => {
+            return {
+              instances: [...state.instances, data.instance],
+              items: [
+                ...state.items,
+                ...data.items.map((item: any) => ({
+                  ...item,
+                  instanceId: data.instance.id,
+                })),
+              ],
+              purchases: [
+                ...state.purchases,
+                ...data.purchases.map((purchase: any) => ({
+                  ...purchase,
+                  instanceId: data.instance.id,
+                })),
+              ],
+            };
+          });
+          resolve(data.instance.id);
+        } catch (error) {
+          reject(
+            new InstanceImportError(
+              `Failed to parse instance data: ${error}`,
+              "インスタンスを読み取ることに失敗しました"
+            )
+          );
+        }
+      } else {
+        reject(
+          new InstanceImportError(
+            "No file selected",
+            "ファイルが選択されていません"
+          )
+        );
+      }
+    };
+  });
+  input.remove();
+  return id;
 }
 
 /**
