@@ -1,7 +1,6 @@
 import {
   AppBar,
   Box,
-  Button,
   List,
   ListItem,
   ListItemButton,
@@ -161,14 +160,16 @@ export default function HistoryRoute() {
     <>
       <AppBar position="static" sx={{ backgroundColor: "transparent" }}>
         <Toolbar sx={{ padding: "0 !important" }}>
-          <Button
+          <ResponsiveButton
+            alwaysCollapse
+            startIcon={<MaterialSymbolIcon icon="arrow_back" />}
             variant="tonal"
             onClick={() => {
               navigate(-1);
             }}
           >
-            <MaterialSymbolIcon icon="arrow_back" size={20} />
-          </Button>
+            戻る
+          </ResponsiveButton>
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
             注文履歴
           </Typography>
@@ -178,6 +179,7 @@ export default function HistoryRoute() {
             onClick={() => {
               setDownloadPinDialogOpen(true);
             }}
+            collapsedVariant="text"
           >
             CSVダウンロード
           </ResponsiveButton>

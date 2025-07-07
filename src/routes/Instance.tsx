@@ -58,21 +58,24 @@ export default function InstanceRoute() {
     <>
       <AppBar position="static" sx={{ backgroundColor: "transparent" }}>
         <Toolbar sx={{ padding: "0 !important" }}>
-          <Button
+          <ResponsiveButton
             variant="tonal"
             onClick={() => {
               navigate("..");
             }}
+            startIcon={<MaterialSymbolIcon icon="arrow_back" />}
+            alwaysCollapse
           >
-            <MaterialSymbolIcon icon="arrow_back" size={20} />
-          </Button>
+            戻る
+          </ResponsiveButton>
           <ResponsiveButton
             variant="tonal"
             sx={{ ml: 1 }}
-            startIcon={<MaterialSymbolIcon icon="edit" size={20} />}
+            startIcon={<MaterialSymbolIcon icon="edit" />}
             onClick={() => {
               navigate("edit");
             }}
+            collapsedVariant="text"
           >
             編集
           </ResponsiveButton>
@@ -81,22 +84,24 @@ export default function InstanceRoute() {
           </Typography>
           <ResponsiveButton
             variant="tonal"
-            startIcon={<MaterialSymbolIcon icon="orders" size={20} />}
+            startIcon={<MaterialSymbolIcon icon="orders" />}
             onClick={() => {
               navigate("history");
             }}
+            collapsedVariant="text"
           >
             注文履歴
           </ResponsiveButton>
           <ResponsiveButton
             variant="tonal"
             sx={{ ml: 1 }}
-            startIcon={<MaterialSymbolIcon icon="delete" size={20} />}
+            startIcon={<MaterialSymbolIcon icon="delete" />}
             onClick={() => {
               setCurrentOrder({});
               setPaidAmount("");
               setDeletedSnackbarOpen(true);
             }}
+            collapsedVariant="text"
           >
             この注文を削除
           </ResponsiveButton>

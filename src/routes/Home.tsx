@@ -81,10 +81,11 @@ export default function HomeRoute() {
             <ResponsiveButton
               size="medium"
               variant="tonal"
-              startIcon={<MaterialSymbolIcon icon="reset_wrench" size={20} />}
+              startIcon={<MaterialSymbolIcon icon="reset_wrench" />}
               onClick={() => {
                 setResetConfirmationOpen(true);
               }}
+              collapsedVariant="text"
             >
               すべてをリセット
             </ResponsiveButton>
@@ -92,9 +93,7 @@ export default function HomeRoute() {
               size="medium"
               variant="tonal"
               sx={{ ml: 1 }}
-              startIcon={
-                <MaterialSymbolIcon icon="pin" size={20} fill={pin !== null} />
-              }
+              startIcon={<MaterialSymbolIcon icon="pin" fill={pin !== null} />}
               onClick={() => {
                 if (pin === null) {
                   setSetPinDialogOpen(true);
@@ -102,6 +101,7 @@ export default function HomeRoute() {
                   setSetPinPinDialogOpen(true);
                 }
               }}
+              collapsedVariant="text"
             >
               {pin === null ? "ピンを設定" : "ピンを変更"}
             </ResponsiveButton>
@@ -109,10 +109,11 @@ export default function HomeRoute() {
               size="medium"
               variant="tonal"
               sx={{ ml: 1 }}
-              startIcon={<MaterialSymbolIcon icon="help" size={20} />}
+              startIcon={<MaterialSymbolIcon icon="help" />}
               onClick={() => {
                 setWelcomeOpen(true);
               }}
+              collapsedVariant="text"
             >
               ヘルプ
             </ResponsiveButton>

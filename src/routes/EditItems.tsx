@@ -107,7 +107,7 @@ export default function EditItemsRoute() {
         <Toolbar sx={{ padding: "0 !important" }}>
           <ResponsiveButton
             variant="tonal"
-            startIcon={<MaterialSymbolIcon icon="arrow_back" fill size={20} />}
+            startIcon={<MaterialSymbolIcon icon="arrow_back" fill />}
             onClick={() => {
               navigate(-1);
             }}
