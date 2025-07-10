@@ -1,0 +1,117 @@
+import { create } from "zustand";
+
+export const LOG_STORE_KEY = "tiny-pos-logs";
+const PERSIST_INTERVAL = 1000 * 60 * 2; // 2 minutes
+
+export interface LogStoreState {
+  logs: {
+    timestamp: string;
+    action: "delete" | "create" | "update";
+    entity: "item" | "purchase" | "instance";
+    data: any;
+  }[];
+}
+
+export interface LogStoreActions {
+  addLog: (
+    action: "delete" | "create" | "update",
+    entity: "item" | "purchase" | "instance",
+    data: any
+  ) => void;
+}
+
+export type LogStore = LogStoreState & LogStoreActions;
+
+const useLogStore = create<LogStore>((set) => ({
+  logs: [],
+
+  addLog(action, entity, data = null) {
+    set((state) => ({
+      logs: [
+        ...state.logs,
+        {
+          timestamp: new Date().toISOString(),
+          action,
+          entity,
+          data,
+        },
+      ],
+    }));
+  },
+}));
+
+/**
+ * Persists the logs to OPFS in a file named "tiny-pos-logs.json.gz".
+ *
+ * It stores the logs in a JSON format compressed with gzip, using the
+ * CompressionStream API, combining them with the previous logs.
+ */
+export async function persistLogsToOPFS() {
+  const logs = useLogStore.getState().logs;
+  if (logs.length === 0) return;
+
+  const fileHandle = await (
+    await navigator.storage.getDirectory()
+  ).getFileHandle("tiny-pos-logs.json.gz", { create: false });
+  const file = await fileHandle.getFile();
+
+  if (file.size > 0) {
+    const oldLogs = await new Response(
+      file.stream().pipeThrough(new DecompressionStream("gzip"))
+    ).json();
+    logs.unshift(...oldLogs);
+  }
+
+  const newText = new Blob([JSON.stringify(logs)], {
+    type: "application/json",
+  });
+  newText
+    .stream()
+    .pipeThrough(new CompressionStream("gzip"))
+    .pipeTo(await fileHandle.createWritable({ keepExistingData: false }));
+}
+
+/**
+ * Persists the logs to LocalStorage in a key named "tiny-pos-logs".
+ *
+ * It stores the logs in a JSON format.
+ */
+export function persistLogsToLocalStorage() {
+  const logs = useLogStore.getState().logs;
+  if (logs.length === 0) return;
+
+  const oldLogs = localStorage.getItem("tiny-pos-logs");
+  if (oldLogs) {
+    try {
+      const parsedLogs = JSON.parse(oldLogs);
+      if (Array.isArray(parsedLogs)) {
+        logs.unshift(...parsedLogs);
+      }
+    } catch (e) {
+      console.error("Failed to parse existing logs from LocalStorage:", e);
+    }
+  }
+
+  localStorage.setItem("tiny-pos-logs", JSON.stringify(logs));
+}
+
+export function setupLogPersistence() {
+  setInterval(async () => {
+    const state = useLogStore.getState();
+    if (state.logs.length > 0) {
+      try {
+        persistLogsToLocalStorage();
+      } catch (error) {
+        console.error("Failed to persist logs to LocalStorage:", error);
+      }
+      try {
+        await persistLogsToOPFS();
+      } catch (error) {
+        console.error("Failed to persist logs to OPFS:", error);
+      }
+      useLogStore.setState({ logs: [] }); // Clear logs after persisting
+    }
+  }, PERSIST_INTERVAL);
+}
+
+export default useLogStore;

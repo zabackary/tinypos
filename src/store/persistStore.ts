@@ -1,3 +1,4 @@
+import { LOG_STORE_KEY } from "./log";
 import usePOSStore, { type POSStoreState } from "./pos";
 
 const LOCALSTORAGE_KEY = "tiny-pos-storage";
@@ -41,7 +42,9 @@ export function subscribePersist(): () => void {
     }
     persistToLocalStorage(state);
     // TODO: should we only flush to disk every once in a while?
-    persistToOriginFS(state);
+    persistToOriginFS(state).catch((error) => {
+      console.error("Failed to persist to OPFS:", error);
+    });
   });
 }
 
@@ -62,7 +65,16 @@ function persistToLocalStorage(state: POSStoreState) {
       hasSeenWelcome: state.hasSeenWelcome,
     },
   });
-  localStorage.setItem(LOCALSTORAGE_KEY, serializedState);
+  try {
+    localStorage.setItem(LOCALSTORAGE_KEY, serializedState);
+  } catch (e) {
+    console.error("Failed to persist to LocalStorage:", e);
+    if (e instanceof DOMException && e.name === "QuotaExceededError") {
+      console.error("Attempting to delete logs to free up space.");
+      localStorage.removeItem(LOG_STORE_KEY);
+      localStorage.setItem(LOCALSTORAGE_KEY, serializedState);
+    }
+  }
 }
 
 function loadFromLocalStorage(): StorageResult | null {

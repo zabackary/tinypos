@@ -13,6 +13,7 @@ import {
 import { memo, useEffect, useMemo, useState } from "react";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import routes from "./routes";
+import { setupLogPersistence } from "./store/log";
 import { loadPersist, subscribePersist } from "./store/persistStore";
 
 const router = createHashRouter(routes);
@@ -38,6 +39,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    setupLogPersistence();
     return subscribePersist();
   }, []);
 

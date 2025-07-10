@@ -18,7 +18,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InstanceButton from "../components/InstanceButton";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
@@ -59,6 +59,26 @@ export default function HomeRoute() {
   const [instanceCreationName, setInstanceCreationName] = useState("");
 
   const [needsPersistPermission, setNeedsPersistPermission] = useState(false);
+  useEffect(() => {
+    if ("storage" in navigator && "persist" in navigator.storage) {
+      navigator.storage.persist().then((persisted) => {
+        setNeedsPersistPermission(!persisted);
+      });
+    }
+  }, []);
+  const unsupportedFeatures = useMemo(() => {
+    const features = [];
+    if (!("storage" in navigator && "persist" in navigator.storage)) {
+      features.push("navigator.storage.persist");
+    }
+    if (!("startViewTransition" in document)) {
+      features.push("document.startViewTransition (不必須)");
+    }
+    if (!("CompressionStream" in window)) {
+      features.push("window.CompressionStream");
+    }
+    return features;
+  }, []);
 
   // Welcome dialog
   const setHasSeenWelcome = usePOSStore((store) => store.setHasSeenWelcome);
@@ -68,14 +88,6 @@ export default function HomeRoute() {
     setHasSeenWelcome(true);
     setWelcomeOpen(false);
   };
-
-  useEffect(() => {
-    if ("storage" in navigator && "persist" in navigator.storage) {
-      navigator.storage.persist().then((persisted) => {
-        setNeedsPersistPermission(!persisted);
-      });
-    }
-  });
 
   // Import
   const importDropdownRef = useRef<HTMLButtonElement>(null);
@@ -140,8 +152,18 @@ export default function HomeRoute() {
             <Typography variant="body1">
               現在、ストレージが足りなければ保存することができない場合がございますのでご注意ください。Chromeでは、インストール後に保存することができるようになります。
             </Typography>
-            <Typography variant="body2">
+            <Typography variant="body2" mt={1}>
               ストレージが十分なら、このアラートは無視しても問題ありません。
+            </Typography>
+          </Alert>
+        ) : null}
+        {unsupportedFeatures.length > 0 ? (
+          <Alert severity="warning">
+            <Typography variant="body1">
+              ご使用中のブラウザは必要な機能をサポートしていません。一部の機能が正しく動作しない場合があります。
+            </Typography>
+            <Typography variant="body2" mt={1}>
+              サポートされていない機能: {unsupportedFeatures.join(", ")}
             </Typography>
           </Alert>
         ) : null}
