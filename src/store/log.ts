@@ -124,4 +124,26 @@ export function setupLogPersistence() {
   });
 }
 
+/**
+ * Retrieves the logs from LocalStorage or OPFS.
+ */
+export async function getLogs(
+  fromOPFS: boolean = false
+): Promise<LogStoreState["logs"]> {
+  if (fromOPFS) {
+    const dirHandle = await navigator.storage.getDirectory();
+    const fileHandle = await dirHandle.getFileHandle("tiny-pos-logs.json.gz", {
+      create: false,
+    });
+    const file = await fileHandle.getFile();
+    const text = await new Response(
+      file.stream().pipeThrough(new DecompressionStream("gzip"))
+    ).text();
+    return JSON.parse(text);
+  } else {
+    const logs = localStorage.getItem(LOG_STORE_KEY);
+    return logs ? JSON.parse(logs) : [];
+  }
+}
+
 export default useLogStore;

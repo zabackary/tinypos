@@ -8,6 +8,7 @@ import {
   Link,
   Typography,
 } from "@mui/material";
+import { getLogs } from "../store/log";
 
 export default function WelcomeDialog({
   headerIsHelp = false,
@@ -53,7 +54,7 @@ export default function WelcomeDialog({
             borderRadius: 3,
             p: 1,
             mt: 2,
-            bgcolor: (theme) => theme.palette.surfaceContainerLowest.main,
+            bgcolor: (theme) => theme.palette.surfaceContainerHighest.main,
           }}
         >
           このアプリをご利用いただき、ありがとうございます。GitHubのスターを押してくれたり、使用中の写真をメール&#xff08;このウェブサイトのURLの「.github.io」の前の部分
@@ -66,7 +67,7 @@ export default function WelcomeDialog({
             borderRadius: 3,
             p: 1,
             mt: 2,
-            bgcolor: (theme) => theme.palette.surfaceContainerLowest.main,
+            bgcolor: (theme) => theme.palette.surfaceContainerHighest.main,
           }}
         >
           イエスは答えられた。「まことに、まことに、あなたに言います。人は、新しく生まれなければ、神の国を見ることはできません。」(
@@ -76,6 +77,26 @@ export default function WelcomeDialog({
         </Typography>
       </DialogContent>
       <DialogActions>
+        {headerIsHelp ? (
+          <Button
+            variant="tonal"
+            onClick={() => {
+              getLogs().then((logs) => {
+                const blob = new Blob([JSON.stringify(logs)], {
+                  type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "tiny-pos-logs.json";
+                a.click();
+                URL.revokeObjectURL(url);
+              });
+            }}
+          >
+            ログをDL
+          </Button>
+        ) : null}
         <Button variant="filled" onClick={onClose}>
           閉じる
         </Button>
