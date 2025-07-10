@@ -148,14 +148,15 @@ export function purchasesToCsv(instanceId: string): string {
     (purchase) => purchase.instanceId === instanceId && !purchase.deleted
   );
   // Get all items
-  const items = state.items.filter(
-    (item) => item.instanceId === instanceId && !item.deleted
-  );
+  const items = state.items.filter((item) => item.instanceId === instanceId);
 
   // Create the CSV header
   const header = [
     "datetime",
-    ...items.map((item) => item.name),
+    ...items.map((item) => {
+      if (item.deleted) return `${item.name} (削除された)`;
+      return item.name;
+    }),
     "total",
     "paid",
     "change",
