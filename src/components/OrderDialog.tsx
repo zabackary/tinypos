@@ -23,7 +23,7 @@ export default function OrderDialog({
   onClose: () => void;
 }) {
   const purchase = usePurchase(purchaseId);
-  const items = useItemInfos(purchase?.instanceId ?? "");
+  const items = useItemInfos(purchase?.instanceId ?? "", true);
 
   if (!purchase) return null;
 
