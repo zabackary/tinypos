@@ -7,7 +7,7 @@ export interface LogStoreState {
   logs: {
     timestamp: string;
     action: "delete" | "create" | "update";
-    entity: "item" | "purchase" | "instance";
+    entity: "item" | "purchase" | "instance" | "pin" | "*";
     data: any;
   }[];
 }
@@ -15,7 +15,7 @@ export interface LogStoreState {
 export interface LogStoreActions {
   addLog: (
     action: "delete" | "create" | "update",
-    entity: "item" | "purchase" | "instance",
+    entity: "item" | "purchase" | "instance" | "pin" | "*",
     data: any
   ) => void;
 }
@@ -71,13 +71,16 @@ export async function persistLogsToOPFS() {
     .pipeTo(await fileHandle.createWritable({ keepExistingData: false }));
 }
 
+let localStoragePersistedSlice: number = 0;
+
 /**
  * Persists the logs to LocalStorage in a key named "tiny-pos-logs".
  *
  * It stores the logs in a JSON format.
  */
 export function persistLogsToLocalStorage() {
-  const logs = useLogStore.getState().logs;
+  const logs = useLogStore.getState().logs.slice(localStoragePersistedSlice);
+  localStoragePersistedSlice += logs.length;
   if (logs.length === 0) return;
 
   const oldLogs = localStorage.getItem("tiny-pos-logs");
@@ -106,12 +109,19 @@ export function setupLogPersistence() {
       }
       try {
         await persistLogsToOPFS();
+        localStoragePersistedSlice = 0;
+        useLogStore.setState({ logs: [] }); // Clear logs after persisting
       } catch (error) {
         console.error("Failed to persist logs to OPFS:", error);
       }
       useLogStore.setState({ logs: [] }); // Clear logs after persisting
     }
   }, PERSIST_INTERVAL);
+  useLogStore.subscribe((state) => {
+    if (state.logs.length > 0) {
+      persistLogsToLocalStorage();
+    }
+  });
 }
 
 export default useLogStore;

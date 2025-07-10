@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { create } from "zustand";
+import useLogStore from "./log";
 
 /**
  * An item represents
@@ -102,12 +103,14 @@ const usePOSStore = create<POSStore>((set) => ({
       purchases: [],
       // hasSeenWelcome: false, (we don't reset this to avoid showing the welcome screen again)
     });
+    useLogStore.getState().addLog("delete", "*", "reset");
   },
 
   setPin(newPin) {
     set({
       pin: newPin,
     });
+    useLogStore.getState().addLog("update", "pin", { newPin });
   },
 
   createInstance(name) {
@@ -122,6 +125,7 @@ const usePOSStore = create<POSStore>((set) => ({
         },
       ],
     }));
+    useLogStore.getState().addLog("create", "instance", { id, name });
     return id;
   },
   createPurchase(instanceId, items, total, paid) {
@@ -143,6 +147,16 @@ const usePOSStore = create<POSStore>((set) => ({
         },
       ],
     }));
+    useLogStore
+      .getState()
+      .addLog("create", "purchase", {
+        id,
+        instanceId,
+        date: new Date().toLocaleString(),
+        items,
+        total,
+        paid,
+      });
     return id;
   },
   createItem(instanceId, name, initialStock, price) {
@@ -162,6 +176,9 @@ const usePOSStore = create<POSStore>((set) => ({
         },
       ],
     }));
+    useLogStore
+      .getState()
+      .addLog("create", "item", { id, instanceId, name, initialStock, price });
     return id;
   },
 
@@ -179,6 +196,7 @@ const usePOSStore = create<POSStore>((set) => ({
         ],
       };
     });
+    useLogStore.getState().addLog("delete", "purchase", { id });
   },
   deleteItem(id) {
     set((store) => {
@@ -194,6 +212,7 @@ const usePOSStore = create<POSStore>((set) => ({
         ],
       };
     });
+    useLogStore.getState().addLog("delete", "item", { id });
   },
 
   updateItem(id, name, initialStock, price) {
@@ -212,6 +231,9 @@ const usePOSStore = create<POSStore>((set) => ({
         ],
       };
     });
+    useLogStore
+      .getState()
+      .addLog("update", "item", { id, name, initialStock, price });
   },
 
   setHasSeenWelcome(hasSeen: boolean): void {
@@ -237,6 +259,7 @@ const usePOSStore = create<POSStore>((set) => ({
         ),
       };
     });
+    useLogStore.getState().addLog("delete", "instance", { id });
   },
 }));
 
