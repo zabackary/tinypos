@@ -40,7 +40,11 @@ export function subscribePersist(): () => void {
       // If we haven't loaded the persisted state yet, skip persisting
       return;
     }
-    persistToLocalStorage(state);
+    try {
+      persistToLocalStorage(state);
+    } catch (error) {
+      console.error("Failed to persist state:", error);
+    }
     // TODO: should we only flush to disk every once in a while?
     persistToOriginFS(state).catch((error) => {
       console.error("Failed to persist to OPFS:", error);
