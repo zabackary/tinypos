@@ -95,9 +95,9 @@ const translation = {
       revenue: "売り上げ",
     },
     statsValues: {
-      orders: "{{value}}件",
-      avgRevenue: "{{value}}円",
-      revenue: "{{value}}円",
+      orders: "{{count}}件",
+      avgRevenue: "{{value}}",
+      revenue: "{{value}}",
     },
     downloadPinInfo:
       "データのCSVをダウンロードするには、PINを入力してください。",
@@ -131,7 +131,7 @@ const translation = {
     totalValue: "{{value}}",
     paidValue: "{{value}}",
     changeValue: "{{value}}",
-    itemQuantity: "{{value}}個",
+    itemQuantity: "{{count}}個",
   },
   instanceButton: {
     delete: "削除",

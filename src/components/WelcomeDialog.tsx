@@ -8,7 +8,7 @@ import {
   Link,
   Typography,
 } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { getLogs } from "../store/log";
 
 export default function WelcomeDialog({
@@ -28,25 +28,31 @@ export default function WelcomeDialog({
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          {t("welcome.p1")} {t("welcome.p1b")}{" "}
-          <Link
-            href="https://github.com/zabackary/tinypos/issues/new"
-            target="_blank"
-          >
-            {t("welcome.reportIssueLinkText")}
-          </Link>
-          。
+          <Trans
+            i18nKey="welcome.p1"
+            components={{
+              createIssue: (
+                <Link
+                  href="https://github.com/zabackary/tinypos/issues/new"
+                  target="_blank"
+                />
+              ),
+            }}
+          />
         </DialogContentText>
         <DialogContentText sx={{ mt: 1 }}>{t("welcome.p2")}</DialogContentText>
         <DialogContentText sx={{ mt: 1 }}>
-          {t("welcome.p3")}{" "}
-          <Link
-            href="https://web.dev/learn/pwa/installation?hl=ja#ios_and_ipados_installation:~:text=%E3%83%9B%E3%83%BC%E3%83%A0%E7%94%BB%E9%9D%A2%E3%81%AB%E3%82%A2%E3%83%97%E3%83%AA,%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%81%BE%E3%81%99%E3%80%82"
-            target="_blank"
-          >
-            {t("welcome.p3LinkText")}
-          </Link>{" "}
-          {"をご覧ください。"}
+          <Trans
+            i18nKey="welcome.p3"
+            components={{
+              moreInfo: (
+                <Link
+                  href="https://web.dev/learn/pwa/installation?hl=ja#ios_and_ipados_installation:~:text=%E3%83%9B%E3%83%BC%E3%83%A0%E7%94%BB%E9%9D%A2%E3%81%AB%E3%82%A2%E3%83%97%E3%83%AA,%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%81%BE%E3%81%99%E3%80%82"
+                  target="_blank"
+                />
+              ),
+            }}
+          />
         </DialogContentText>
         <Typography
           variant="body2"

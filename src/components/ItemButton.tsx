@@ -8,9 +8,10 @@ import {
   useTheme,
   type SxProps,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { useViewTransitionState } from "react-router-dom";
 import { useItem, useItemStock } from "../store/hooks";
-import { formatCount, formatCurrency } from "../utils/format";
+import { formatCurrency } from "../utils/format";
 
 export interface ItemButtonProps {
   id: string;
@@ -25,6 +26,7 @@ export default function ItemButton({
   onClick,
   sx = {},
 }: ItemButtonProps) {
+  const { t } = useTranslation();
   const item = useItem(id);
   const stock = useItemStock(id);
   const theme = useTheme();
@@ -114,7 +116,7 @@ export default function ItemButton({
                   : "none",
               }}
             >
-              {formatCount(stock)}
+              {t("orderDialog.itemQuantity", { count: stock })}
             </Box>
           </Typography>
         </CardContent>

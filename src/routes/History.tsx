@@ -31,7 +31,7 @@ import {
 } from "../store/hooks";
 import usePOSStore from "../store/pos";
 import { downloadInstanceCsv } from "../store/utils";
-import { formatCount, formatCurrency } from "../utils/format";
+import { formatCurrency } from "../utils/format";
 
 function PurchaseItem({
   purchaseId,
@@ -213,7 +213,7 @@ export default function HistoryRoute() {
             <StatsCard
               title={t("history.stats.orders")}
               value={t("history.statsValues.orders", {
-                value: formatCount(stats.totalCount),
+                count: stats.totalCount,
               })}
               icon="orders"
             />

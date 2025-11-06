@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useItemInfos, usePurchase } from "../store/hooks";
-import { formatCount, formatCurrency } from "../utils/format";
+import { formatCurrency } from "../utils/format";
 
 export default function OrderDialog({
   purchaseId,
@@ -40,7 +40,7 @@ export default function OrderDialog({
               <ListItemText
                 primary={items.find((i) => i.id === item.itemId)?.name}
                 secondary={t("orderDialog.itemQuantity", {
-                  value: formatCount(item.quantity),
+                  count: item.quantity,
                 })}
               />
             </ListItem>
