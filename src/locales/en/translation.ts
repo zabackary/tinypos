@@ -163,5 +163,6 @@ const translation = {
   numberPad: {
     submit: "Done",
   },
+  languageSelect: "Select language",
 };
 export default translation;

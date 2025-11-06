@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import translationEN from "./locales/en/translation";
 import translationJA from "./locales/ja/translation";
 
-const resources = {
+export const resources = {
   en: {
     translation: translationEN,
   },
@@ -14,8 +14,7 @@ const resources = {
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: "ja",
-  fallbackLng: "dev",
+  fallbackLng: "en",
   interpolation: { escapeValue: false },
 });
 

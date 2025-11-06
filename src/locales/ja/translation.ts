@@ -167,6 +167,7 @@ const translation = {
   numberPad: {
     submit: "終了",
   },
+  languageSelect: "言語を選択",
 };
 
 export default translation;

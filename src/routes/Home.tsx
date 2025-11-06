@@ -22,6 +22,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import InstanceButton from "../components/InstanceButton";
+import LanguagePickerDialog from "../components/LanguagePickerDialog";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
 import PinDialog from "../components/PinDialog";
 import ResponsiveButton from "../components/ResponsiveButton";
@@ -35,7 +36,7 @@ export default function HomeRoute() {
   const instances = useInstances();
   const navigate = useNavigate();
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const createInstance = usePOSStore((store) => store.createInstance);
   const setPin = usePOSStore((store) => store.setPin);
@@ -99,6 +100,9 @@ export default function HomeRoute() {
   const [importError, setImportError] = useState<string | null>(null);
   const [importErrorDialogOpen, setImportErrorDialogOpen] = useState(false);
 
+  // Language Picker
+  const [languageSelectOpen, setLanguageSelectOpen] = useState(false);
+
   const smallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   return (
@@ -147,6 +151,19 @@ export default function HomeRoute() {
               collapsedVariant="text"
             >
               {t("home.help")}
+            </ResponsiveButton>
+            <ResponsiveButton
+              size="medium"
+              variant="tonal"
+              sx={{ ml: 1 }}
+              startIcon={<MaterialSymbolIcon icon="language" />}
+              onClick={() => {
+                setLanguageSelectOpen(true);
+              }}
+              alwaysCollapse
+              collapsedVariant="text"
+            >
+              {t("languageSelect")}
             </ResponsiveButton>
           </Toolbar>
         </AppBar>
@@ -547,6 +564,15 @@ export default function HomeRoute() {
         open={welcomeOpen}
         onClose={handleWelcomeClose}
         headerIsHelp={hasSeenWelcome}
+      />
+      <LanguagePickerDialog
+        open={languageSelectOpen}
+        onClose={(value) => {
+          if (value) {
+            i18n.changeLanguage(value);
+          }
+          setLanguageSelectOpen(false);
+        }}
       />
     </>
   );
