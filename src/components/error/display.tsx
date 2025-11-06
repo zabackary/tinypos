@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import MaterialSymbolIcon from "../MaterialSymbolIcon";
 
@@ -23,8 +24,11 @@ export default function ErrorPage({
   debuggingDetails,
 }: ErrorPageProps) {
   const [expanded, setExpanded] = useState(false);
-  const [debuggingDetailsTooltip, setDebuggingDetailsTooltip] =
-    useState("コピーする");
+  const [debuggingDetailsTooltip, setDebuggingDetailsTooltip] = useState("");
+  const { t } = useTranslation();
+  // initialize tooltip text from translations
+  if (debuggingDetailsTooltip === "")
+    setDebuggingDetailsTooltip(t("error.copy"));
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -54,10 +58,10 @@ export default function ErrorPage({
         maxWidth={500}
       >
         <Typography variant="h4" component="h1" textAlign="center">
-          エラーが発生しました。
+          {t("error.title")}
         </Typography>
         <Typography variant="h6" component="div" textAlign="center">
-          意外とエラーが発生しました。GitHubにIssueを作成してください。下のクリップボードボタンを押してエラーをコピーしてご利用ください。
+          {t("error.hint")}
         </Typography>
         <Typography variant="body2" color="text.secondary" textAlign="center">
           <i>{errorText}</i>
@@ -71,7 +75,7 @@ export default function ErrorPage({
             }}
             variant="filled"
           >
-            ホームに戻る
+            {t("error.backHome")}
           </Button>
           <ButtonGroup variant="tonal">
             <Tooltip title={debuggingDetailsTooltip}>
@@ -90,14 +94,14 @@ export default function ErrorPage({
                   },
                 }}
               >
-                コピーする
+                {t("error.copy")}
               </Button>
             </Tooltip>
-            <Tooltip title="もっと見る">
+            <Tooltip title={t("error.more")}>
               <Button
                 onClick={handleExpandClick}
                 aria-expanded={expanded}
-                aria-label="もっと見る"
+                aria-label={t("error.more")}
                 sx={{
                   ml: 0.5,
                   borderTopLeftRadius: expanded

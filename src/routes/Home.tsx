@@ -19,6 +19,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import InstanceButton from "../components/InstanceButton";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
@@ -33,6 +34,8 @@ import { importInstance, InstanceImportError } from "../store/utils";
 export default function HomeRoute() {
   const instances = useInstances();
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
 
   const createInstance = usePOSStore((store) => store.createInstance);
   const setPin = usePOSStore((store) => store.setPin);
@@ -104,7 +107,7 @@ export default function HomeRoute() {
         <AppBar position="static" sx={{ backgroundColor: "transparent" }}>
           <Toolbar sx={{ padding: "0 !important" }}>
             <Typography variant="h6" sx={{ flexGrow: 1, px: 2 }}>
-              tinyPOS
+              {t("app.title")}
             </Typography>
             <ResponsiveButton
               size="medium"
@@ -115,7 +118,7 @@ export default function HomeRoute() {
               }}
               collapsedVariant="text"
             >
-              すべてをリセット
+              {t("home.resetAll")}
             </ResponsiveButton>
             <ResponsiveButton
               size="medium"
@@ -131,7 +134,7 @@ export default function HomeRoute() {
               }}
               collapsedVariant="text"
             >
-              {pin === null ? "ピンを設定" : "ピンを変更"}
+              {pin === null ? t("home.setPin") : t("home.changePin")}
             </ResponsiveButton>
             <ResponsiveButton
               size="medium"
@@ -143,27 +146,27 @@ export default function HomeRoute() {
               }}
               collapsedVariant="text"
             >
-              ヘルプ
+              {t("home.help")}
             </ResponsiveButton>
           </Toolbar>
         </AppBar>
         {needsPersistPermission ? (
           <Alert severity="error">
-            <Typography variant="body1">
-              現在、ストレージが足りなければ保存することができない場合がございますのでご注意ください。Chromeでは、インストール後に保存することができるようになります。
-            </Typography>
+            <Typography variant="body1">{t("home.persistWarning")}</Typography>
             <Typography variant="body2" mt={1}>
-              ストレージが十分なら、このアラートは無視しても問題ありません。
+              {t("home.persistWarningDetail")}
             </Typography>
           </Alert>
         ) : null}
         {unsupportedFeatures.length > 0 ? (
           <Alert severity="warning">
             <Typography variant="body1">
-              ご使用中のブラウザは必要な機能をサポートしていません。一部の機能が正しく動作しない場合があります。
+              {t("home.unsupportedFeaturesTitle")}
             </Typography>
             <Typography variant="body2" mt={1}>
-              サポートされていない機能: {unsupportedFeatures.join(", ")}
+              {t("home.unsupportedFeaturesDetail", {
+                features: unsupportedFeatures.join(", "),
+              })}
             </Typography>
           </Alert>
         ) : null}
@@ -176,7 +179,7 @@ export default function HomeRoute() {
             width="100%"
           >
             <Typography textAlign="center" variant="h4" component="h1" mt={2}>
-              インスタンスをお選びください
+              {t("home.selectInstanceTitle")}
             </Typography>
             <Stack
               direction="row"
@@ -224,7 +227,7 @@ export default function HomeRoute() {
                     <MaterialSymbolIcon icon="box" size={64} />
                   </Box>
                   <Typography variant="body1" textAlign="center">
-                    インスタンスがありません
+                    {t("home.noInstances")}
                   </Typography>
                 </Stack>
               )}
@@ -251,9 +254,9 @@ export default function HomeRoute() {
                 px: smallScreen ? 4 : undefined,
               }}
             >
-              インスタンスを作成
+              {t("home.createInstance")}
             </Button>
-            <Tooltip title="もっと見る">
+            <Tooltip title={t("home.importTooltip")}>
               <Button
                 onClick={() => {
                   setImportDropdownExpanded((prev) => !prev);
@@ -313,7 +316,7 @@ export default function HomeRoute() {
                 setImportPinDialogOpen(true);
               }}
             >
-              インスタンスをインポート
+              {t("home.importInstance")}
             </MenuItem>
           </Menu>
         </Stack>
@@ -325,11 +328,11 @@ export default function HomeRoute() {
           reset();
           setResetPinDialogOpen(false);
         }}
-        actionLabel="リセット"
+        actionLabel={t("home.resetAction")}
       />
       <PinDialog
         open={setPinPinDialogOpen}
-        info="現在のピンを入力してください。"
+        info={t("home.setPinTitle") /* reuse as brief info */}
         onCancel={() => setSetPinPinDialogOpen(false)}
         onEnter={() => {
           setSetPinPinDialogOpen(false);
@@ -348,13 +351,11 @@ export default function HomeRoute() {
         open={resetConfirmationOpen}
         onClose={() => setResetConfirmationOpen(false)}
       >
-        <DialogTitle>
-          すべてのデータ（注文・入力した商品など）をリセットします
-        </DialogTitle>
+        <DialogTitle>{t("home.resetDialogTitle")}</DialogTitle>
         <DialogContent>
           <Typography>
-            {pin !== null ? "リセットするには、ピンを入力してください。" : ""}
-            リセット後はデータの回復ができません。本当にリセットしますか？
+            {pin !== null ? t("home.pinRequiredForReset") : ""}
+            {t("home.resetDialogBody")}
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -364,7 +365,7 @@ export default function HomeRoute() {
               setResetConfirmationOpen(false);
             }}
           >
-            キャンセル
+            {t("common.cancel")}
           </Button>
           <Button
             variant="filled"
@@ -384,7 +385,7 @@ export default function HomeRoute() {
               },
             }}
           >
-            {pin !== null ? "ピンを入力" : "リセット"}
+            {pin !== null ? t("home.pin") : t("home.resetAll")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -393,10 +394,10 @@ export default function HomeRoute() {
         disableRestoreFocus
         onClose={() => setInstanceCreationDialogOpen(false)}
       >
-        <DialogTitle>インスタンスを作成</DialogTitle>
+        <DialogTitle>{t("home.createInstance")}</DialogTitle>
         <DialogContent>
           <TextField
-            label="インスタンス名"
+            label={t("home.instanceNameLabel")}
             variant="outlined"
             fullWidth
             autoFocus
@@ -412,7 +413,7 @@ export default function HomeRoute() {
               setInstanceCreationDialogOpen(false);
             }}
           >
-            キャンセル
+            {t("common.cancel")}
           </Button>
           <Button
             variant="filled"
@@ -425,7 +426,7 @@ export default function HomeRoute() {
               });
             }}
           >
-            作成
+            {t("home.create")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -434,10 +435,10 @@ export default function HomeRoute() {
         disableRestoreFocus
         onClose={() => setSetPinDialogOpen(false)}
       >
-        <DialogTitle>ピンを設定</DialogTitle>
+        <DialogTitle>{t("home.setPinTitle")}</DialogTitle>
         <DialogContent>
           <TextField
-            label="新しいピン"
+            label={t("home.newPinLabel")}
             type="password"
             fullWidth
             autoFocus
@@ -446,7 +447,7 @@ export default function HomeRoute() {
             sx={{ my: 1 }}
           />
           <TextField
-            label="ピンの確認"
+            label={t("home.confirmPinLabel")}
             type="password"
             fullWidth
             value={setPinConfirmInput}
@@ -465,7 +466,7 @@ export default function HomeRoute() {
               setSetPinDialogOpen(false);
             }}
           >
-            キャンセル
+            {t("common.cancel")}
           </Button>
           {pin !== null ? (
             <Button
@@ -475,7 +476,7 @@ export default function HomeRoute() {
                 setSetPinDialogOpen(false);
               }}
             >
-              ピンを削除
+              {t("home.pin") + "を削除"}
             </Button>
           ) : null}
           <Button
@@ -490,16 +491,16 @@ export default function HomeRoute() {
               setSetPinDialogOpen(false);
             }}
           >
-            設定
+            {t("common.ok")}
           </Button>
         </DialogActions>
       </Dialog>
       <PinDialog
         open={importPinDialogOpen}
-        info="インポートするには、PINを入力してください。"
+        info={t("home.importPinInfo")}
         closeIfNoPin
         onCancel={() => setImportPinDialogOpen(false)}
-        actionLabel="インポート"
+        actionLabel={t("home.importAction")}
         onEnter={() => {
           setImportPinDialogOpen(false);
           importInstance()
@@ -514,7 +515,7 @@ export default function HomeRoute() {
                 setImportError(error.humanMessage);
                 setImportErrorDialogOpen(true);
               } else {
-                setImportError("コンソールを確認してください。");
+                setImportError(t("store.consoleCheck"));
                 setImportErrorDialogOpen(true);
               }
             });
@@ -524,10 +525,10 @@ export default function HomeRoute() {
         open={importErrorDialogOpen}
         onClose={() => setImportErrorDialogOpen(false)}
       >
-        <DialogTitle>インポートエラー</DialogTitle>
+        <DialogTitle>{t("home.importErrorTitle")}</DialogTitle>
         <DialogContent>
           <DialogContentText variant="body1">
-            インポート中にエラーが発生しました。
+            {t("home.importErrorBody")}
           </DialogContentText>
           <DialogContentText variant="body2" mt={1}>
             {importError}
@@ -538,7 +539,7 @@ export default function HomeRoute() {
             variant="filled"
             onClick={() => setImportErrorDialogOpen(false)}
           >
-            閉じる
+            {t("common.close")}
           </Button>
         </DialogActions>
       </Dialog>

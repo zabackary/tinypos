@@ -1,4 +1,5 @@
 import { stringify as csvStringify } from "csv-stringify/browser/esm/sync";
+import i18n from "../i18n";
 import usePOSStore, { EXPORT_STATE_VERSION } from "./pos";
 
 export function downloadInstanceCsv(instanceId: string): void {
@@ -88,7 +89,7 @@ export async function importInstance(): Promise<string> {
             reject(
               new InstanceImportError(
                 `Instance with ID ${data.instance.id} already exists.`,
-                `このインスタンスはもう存在します。削除してからまた試してください。`
+                i18n.t("store.instanceExists")
               )
             );
             return;
@@ -117,7 +118,7 @@ export async function importInstance(): Promise<string> {
           reject(
             new InstanceImportError(
               `Failed to parse instance data: ${error}`,
-              "インスタンスを読み取ることに失敗しました"
+              i18n.t("store.importFailed")
             )
           );
         }
@@ -125,7 +126,7 @@ export async function importInstance(): Promise<string> {
         reject(
           new InstanceImportError(
             "No file selected",
-            "ファイルが選択されていません"
+            i18n.t("store.noFileSelected")
           )
         );
       }
@@ -154,7 +155,7 @@ export function purchasesToCsv(instanceId: string): string {
   const header = [
     "datetime",
     ...items.map((item) => {
-      if (item.deleted) return `${item.name} (削除された)`;
+      if (item.deleted) return `${item.name} (${i18n.t("store.deletedLabel")})`;
       return item.name;
     }),
     "total",

@@ -11,6 +11,7 @@ import {
   Variant,
 } from "mui-material-expressive";
 import { memo, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import routes from "./routes";
 import { setupLogPersistence } from "./store/log";
@@ -20,6 +21,7 @@ const router = createHashRouter(routes);
 const Router = memo(() => <RouterProvider router={router} />);
 
 export default function App() {
+  const { t } = useTranslation();
   const theme = useMemo(
     () =>
       createM3Theme({
@@ -76,13 +78,13 @@ export default function App() {
             color={theme.palette.onSurfaceVariant.main}
             variant="caption"
           >
-            tinyPOS &middot; v{APP_VERSION}
+            {t("app.footerVersionPrefix", { version: APP_VERSION })}
           </Typography>
           <Typography
             color={theme.palette.onSurfaceVariant.main}
             variant="caption"
           >
-            made with ✝ and 💖 in japan &middot; github.com/zabackary
+            {t("app.footerMadeWith")}
           </Typography>
         </Stack>
       </Stack>

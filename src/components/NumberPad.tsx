@@ -7,6 +7,7 @@ import {
   type SxProps,
 } from "@mui/material";
 import { type ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import MaterialSymbolIcon from "./MaterialSymbolIcon";
 
 function NumberButton({
@@ -66,6 +67,7 @@ export default function NumberPad({
   sx,
 }: NumberPadProps) {
   const theme = useTheme();
+  const { t } = useTranslation();
   return (
     <Box
       display="grid"
@@ -111,7 +113,7 @@ export default function NumberPad({
         disabled={disabled}
         onClick={() => onSubmit()}
       >
-        終了
+        {t("numberPad.submit")}
       </Button>
     </Box>
   );

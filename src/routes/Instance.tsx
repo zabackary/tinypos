@@ -13,6 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   useNavigate,
   useParams,
@@ -56,6 +57,8 @@ export default function InstanceRoute() {
 
   const [lastPurchaseId, setLastPurchaseId] = useState<string | null>(null);
 
+  const { t } = useTranslation();
+
   const isTransitioningEditItems = useViewTransitionState(
     `/${instance?.id}/edit`
   );
@@ -79,7 +82,7 @@ export default function InstanceRoute() {
             startIcon={<MaterialSymbolIcon icon="arrow_back" />}
             alwaysCollapse
           >
-            戻る
+            {t("instance.back")}
           </ResponsiveButton>
           <ResponsiveButton
             variant="tonal"
@@ -92,7 +95,7 @@ export default function InstanceRoute() {
             }}
             collapsedVariant="text"
           >
-            編集
+            {t("instance.edit")}
           </ResponsiveButton>
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
             {instance.name}
@@ -107,7 +110,7 @@ export default function InstanceRoute() {
             }}
             collapsedVariant="text"
           >
-            注文履歴
+            {t("instance.orderHistory")}
           </ResponsiveButton>
           <ResponsiveButton
             variant="tonal"
@@ -120,7 +123,7 @@ export default function InstanceRoute() {
             }}
             collapsedVariant="text"
           >
-            この注文を削除
+            {t("instance.deleteOrder")}
           </ResponsiveButton>
         </Toolbar>
       </AppBar>
@@ -213,25 +216,28 @@ export default function InstanceRoute() {
                       : "none",
                 }}
               >
-                商品がありません。
+                {t("instance.noItems")}
               </Typography>
               <Typography variant="body2" textAlign="center">
-                上の編集ボタンをクリックして商品を追加してください。
+                {t("instance.addItemsHint")}
               </Typography>
             </Stack>
           )}
         </Section>
         <Section direction={"column"} justifyContent={"center"} flexGrow={0}>
           <PaymentColumn
-            label={`合計 (${Object.values(currentOrder).reduce(
-              (a, b) => a + b,
-              0
-            )}品)`}
+            label={t("instance.totalLabel", {
+              count: Object.values(currentOrder).reduce((a, b) => a + b, 0),
+            })}
             amount={total.toLocaleString("ja-JP")}
           />
-          <PaymentColumn label="お預かり金" amount={paidAmount} isTyping />
           <PaymentColumn
-            label="お釣り"
+            label={t("instance.paidLabel")}
+            amount={paidAmount}
+            isTyping
+          />
+          <PaymentColumn
+            label={t("instance.changeLabel")}
             error={change < 0}
             amount={change.toLocaleString("ja-JP")}
           />
@@ -274,7 +280,7 @@ export default function InstanceRoute() {
         onClose={() => setDeletedSnackbarOpen(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
-        <SnackbarContent message="注文が削除されました" />
+        <SnackbarContent message={t("instance.orderDeletedSnackbar")} />
       </Snackbar>
       <Popover
         open={purchaseSavedSnackbarOpen}
@@ -339,7 +345,7 @@ export default function InstanceRoute() {
             mx={3}
             mb={2}
           >
-            注文が保存されました
+            {t("instance.orderSavedTitle")}
           </Typography>
           <Button
             variant="outlined"
@@ -357,7 +363,7 @@ export default function InstanceRoute() {
               mb: 2,
             }}
           >
-            注文を削除
+            {t("instance.deleteOrderButton")}
           </Button>
         </Stack>
       </Popover>

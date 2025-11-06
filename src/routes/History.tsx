@@ -12,6 +12,7 @@ import {
   type SxProps,
 } from "@mui/material";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import MaterialSymbolIcon, {
   type MaterialSymbolIconProps,
@@ -30,6 +31,7 @@ import {
 } from "../store/hooks";
 import usePOSStore from "../store/pos";
 import { downloadInstanceCsv } from "../store/utils";
+import { formatCount, formatCurrency } from "../utils/format";
 
 function PurchaseItem({
   purchaseId,
@@ -141,6 +143,8 @@ export default function HistoryRoute() {
 
   const purchases = usePurchases(instance?.id ?? "");
 
+  const { t } = useTranslation();
+
   const deletePurchase = usePOSStore((store) => store.deletePurchase);
 
   // item dialog state
@@ -168,10 +172,10 @@ export default function HistoryRoute() {
               navigate(-1);
             }}
           >
-            戻る
+            {t("history.back")}
           </ResponsiveButton>
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
-            注文履歴
+            {t("history.title")}
           </Typography>
           <ResponsiveButton
             variant="tonal"
@@ -181,7 +185,7 @@ export default function HistoryRoute() {
             }}
             collapsedVariant="text"
           >
-            CSVダウンロード
+            {t("history.csvDownload")}
           </ResponsiveButton>
         </Toolbar>
       </AppBar>
@@ -207,18 +211,24 @@ export default function HistoryRoute() {
             minHeight="min-content"
           >
             <StatsCard
-              title="注文数"
-              value={`${stats.totalCount.toLocaleString()}件`}
+              title={t("history.stats.orders")}
+              value={t("history.statsValues.orders", {
+                value: formatCount(stats.totalCount),
+              })}
               icon="orders"
             />
             <StatsCard
-              title="平均注文の売上"
-              value={`${stats.averageRevenue.toLocaleString()}円`}
+              title={t("history.stats.avgRevenue")}
+              value={t("history.statsValues.avgRevenue", {
+                value: formatCurrency(stats.averageRevenue),
+              })}
               icon="inventory"
             />
             <StatsCard
-              title="売り上げ"
-              value={`${stats.totalRevenue.toLocaleString()}円`}
+              title={t("history.stats.revenue")}
+              value={t("history.statsValues.revenue", {
+                value: formatCurrency(stats.totalRevenue),
+              })}
               icon="money"
             />
           </Stack>
@@ -280,7 +290,7 @@ export default function HistoryRoute() {
                   viewTransitionName: `instance-${instance.id}-empty-state-text`,
                 }}
               >
-                注文がありません
+                {t("history.noOrders")}
               </Typography>
             </Stack>
           </Section>
@@ -312,7 +322,7 @@ export default function HistoryRoute() {
       />
       <PinDialog
         open={downloadPinDialogOpen}
-        info="データのCSVをダウンロードするには、PINを入力してください。"
+        info={t("history.downloadPinInfo")}
         closeIfNoPin
         onCancel={() => {
           setDownloadPinDialogOpen(false);

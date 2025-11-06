@@ -9,7 +9,9 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { useItemInfos, usePurchase } from "../store/hooks";
+import { formatCount, formatCurrency } from "../utils/format";
 
 export default function OrderDialog({
   purchaseId,
@@ -24,6 +26,7 @@ export default function OrderDialog({
 }) {
   const purchase = usePurchase(purchaseId);
   const items = useItemInfos(purchase?.instanceId ?? "", true);
+  const { t } = useTranslation();
 
   if (!purchase) return null;
 
@@ -36,7 +39,9 @@ export default function OrderDialog({
             <ListItem key={item.itemId} disableGutters>
               <ListItemText
                 primary={items.find((i) => i.id === item.itemId)?.name}
-                secondary={`${item.quantity}個`}
+                secondary={t("orderDialog.itemQuantity", {
+                  value: formatCount(item.quantity),
+                })}
               />
             </ListItem>
           ))}
@@ -49,43 +54,59 @@ export default function OrderDialog({
           disablePadding
         >
           <ListItem
-            secondaryAction={<Typography>{purchase.total}円</Typography>}
+            secondaryAction={
+              <Typography>
+                {t("orderDialog.totalValue", {
+                  value: formatCurrency(purchase.total),
+                })}
+              </Typography>
+            }
             sx={{
               borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
               mb: 1,
               p: 2,
             }}
           >
-            <ListItemText primary="合計" />
-          </ListItem>
-          <ListItem
-            secondaryAction={<Typography>{purchase.paid}円</Typography>}
-            sx={{
-              borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
-              mb: 1,
-              p: 2,
-            }}
-          >
-            <ListItemText primary="お預かり金" />
+            <ListItemText primary={t("orderDialog.total")} />
           </ListItem>
           <ListItem
             secondaryAction={
-              <Typography>{purchase.paid - purchase.total}円</Typography>
+              <Typography>
+                {t("orderDialog.paidValue", {
+                  value: formatCurrency(purchase.paid),
+                })}
+              </Typography>
+            }
+            sx={{
+              borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+              mb: 1,
+              p: 2,
+            }}
+          >
+            <ListItemText primary={t("orderDialog.paid")} />
+          </ListItem>
+          <ListItem
+            secondaryAction={
+              <Typography>
+                {t("orderDialog.changeValue", {
+                  value: formatCurrency(purchase.paid - purchase.total),
+                })}
+              </Typography>
             }
             sx={{
               p: 2,
             }}
           >
-            <ListItemText primary="お釣り" />
+            <ListItemText primary={t("orderDialog.change")} />
           </ListItem>
         </List>
       </DialogContent>
       <DialogActions>
         <Button variant="outlined" color="error" onClick={onDelete}>
-          削除
+          {t("orderDialog.delete")}
         </Button>
         <Button variant="filled" onClick={onClose}>
-          閉じる
+          {t("orderDialog.close")}
         </Button>
       </DialogActions>
     </Dialog>

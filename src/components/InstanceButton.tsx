@@ -15,9 +15,11 @@ import {
   type SxProps,
 } from "@mui/material";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useInstance, useInstanceStats } from "../store/hooks";
 import usePOSStore from "../store/pos";
 import { downloadInstanceCsv, exportInstance } from "../store/utils";
+import { formatCount } from "../utils/format";
 import MaterialSymbolIcon from "./MaterialSymbolIcon";
 import PinDialog from "./PinDialog";
 
@@ -44,6 +46,16 @@ export default function InstanceButton({
   const [exportPinDialogOpen, setExportPinDialogOpen] = useState(false);
 
   const smallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const { t } = useTranslation();
+
+  const itemsDisplay =
+    instanceStats && instanceStats.items != null
+      ? formatCount(instanceStats.items)
+      : "?";
+  const purchasesDisplay =
+    instanceStats && instanceStats.purchases != null
+      ? formatCount(instanceStats.purchases)
+      : "?";
 
   return (
     <>
@@ -69,8 +81,10 @@ export default function InstanceButton({
                 textAlign="center"
                 my={2}
               >
-                {instanceStats?.items ?? "?"}品 &middot;{" "}
-                {instanceStats?.purchases ?? "?"}件
+                {t("instanceButton.statsSummary", {
+                  items: itemsDisplay,
+                  purchases: purchasesDisplay,
+                })}
               </Typography>
             </Stack>
           </CardContent>
@@ -86,7 +100,7 @@ export default function InstanceButton({
             onClick={() => setConfirmDeleteDialogOpen(true)}
             fullWidth={smallScreen}
           >
-            削除
+            {t("instanceButton.delete")}
           </Button>
           <Button
             size="small"
@@ -96,7 +110,7 @@ export default function InstanceButton({
             }}
             fullWidth={smallScreen}
           >
-            CSVとしてDL
+            {t("instanceButton.downloadCsv")}
           </Button>
           <Button
             size="small"
@@ -106,13 +120,13 @@ export default function InstanceButton({
             }}
             fullWidth={smallScreen}
           >
-            エクスポート
+            {t("instanceButton.export")}
           </Button>
         </CardActions>
       </Card>
       <PinDialog
         open={confirmDeletePinDialogOpen}
-        info="PINを入力して、インスタンスを削除します。"
+        info={t("instanceButton.pinInfoDelete")}
         closeIfNoPin
         onCancel={() => setConfirmDeletePinDialogOpen(false)}
         onEnter={() => {
@@ -122,10 +136,10 @@ export default function InstanceButton({
       />
       <PinDialog
         open={downloadPinDialogOpen}
-        info="CSVをダウンロードするには、PINを入力してください。"
+        info={t("instanceButton.pinInfoDownload")}
         closeIfNoPin
         onCancel={() => setDownloadPinDialogOpen(false)}
-        actionLabel="ダウンロード"
+        actionLabel={t("instanceButton.downloadCsv")}
         onEnter={() => {
           downloadInstanceCsv(id);
           setDownloadPinDialogOpen(false);
@@ -133,8 +147,8 @@ export default function InstanceButton({
       />
       <PinDialog
         open={exportPinDialogOpen}
-        info="インスタンスをエクスポートするには、PINを入力してください。"
-        actionLabel="エクスポート"
+        info={t("instanceButton.pinInfoExport")}
+        actionLabel={t("instanceButton.export")}
         closeIfNoPin
         onCancel={() => setExportPinDialogOpen(false)}
         onEnter={() => {
@@ -146,11 +160,10 @@ export default function InstanceButton({
         open={confirmDeleteDialogOpen}
         onClose={() => setConfirmDeleteDialogOpen(false)}
       >
-        <DialogTitle>インスタンスを削除</DialogTitle>
+        <DialogTitle>{t("instanceButton.confirmDeleteTitle")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            このインスタンスを本当に削除してもよろしいですか？削除後は、元に戻すことができません。このインスタンスの注文・商品は
-            <b>すべて削除されます</b>ので、ご注意ください。
+            {t("instanceButton.confirmDeleteBody")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -158,7 +171,7 @@ export default function InstanceButton({
             onClick={() => setConfirmDeleteDialogOpen(false)}
             variant="tonal"
           >
-            キャンセル
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={() => {
@@ -174,7 +187,7 @@ export default function InstanceButton({
               },
             }}
           >
-            「{instance?.name}」を削除
+            {t("instanceButton.confirmDeleteAction", { name: instance?.name })}
           </Button>
         </DialogActions>
       </Dialog>

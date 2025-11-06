@@ -17,6 +17,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
 import NotFound from "../components/NotFound";
@@ -36,6 +37,7 @@ function ItemItem({
   onDelete: () => void;
 }) {
   const stock = useItemStock(item.id);
+  const { t } = useTranslation();
   return (
     <ListItem
       key={item.id}
@@ -46,7 +48,7 @@ function ItemItem({
             startIcon={<MaterialSymbolIcon icon="edit" />}
             variant="outlined"
           >
-            編集
+            {t("editItems.edit")}
           </ResponsiveButton>
           <ResponsiveButton
             onClick={onDelete}
@@ -55,7 +57,7 @@ function ItemItem({
             color="error"
             sx={{ marginLeft: 1 }}
           >
-            削除
+            {t("editItems.delete")}
           </ResponsiveButton>
         </>
       }
@@ -76,24 +78,11 @@ function ItemItem({
         }
         secondary={
           <>
-            価格:{" "}
-            <Box
-              component="span"
-              sx={{
-                viewTransitionName: `instance-${item.instanceId}-item-${item.id}-price`,
-              }}
-            >
-              {item.price.toLocaleString()}円
-            </Box>
-            , 初期在庫: {item.initialStock.toLocaleString()}個, 現在の在庫:{" "}
-            <Box
-              component="span"
-              sx={{
-                viewTransitionName: `instance-${item.instanceId}-item-${item.id}-stock`,
-              }}
-            >
-              {stock}
-            </Box>
+            {t("editItems.itemDetails", {
+              price: item.price.toLocaleString(),
+              initialStock: item.initialStock.toLocaleString(),
+              stock,
+            })}
           </>
         }
       />
@@ -105,6 +94,8 @@ export default function EditItemsRoute() {
   const navigate = useNavigate();
   const params = useParams();
   const instance = useInstance(params.instanceId ?? "");
+
+  const { t } = useTranslation();
 
   const theme = useTheme();
 
@@ -142,10 +133,10 @@ export default function EditItemsRoute() {
               navigate(-1);
             }}
           >
-            保存
+            {t("editItems.saving")}
           </ResponsiveButton>
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
-            「{instance.name}」を編集中
+            {t("editItems.editingTitle", { name: instance.name })}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -214,7 +205,7 @@ export default function EditItemsRoute() {
                   viewTransitionName: `instance-${instance.id}-empty-state-text`,
                 }}
               >
-                商品がありません
+                {t("editItems.noItems")}
               </Typography>
             </Stack>
           )}
@@ -229,7 +220,7 @@ export default function EditItemsRoute() {
             setNewItemInitialStock(0);
           }}
         >
-          商品を追加
+          {t("editItems.addItem")}
         </Button>
       </Stack>
       <Dialog
@@ -263,12 +254,14 @@ export default function EditItemsRoute() {
         disableRestoreFocus
       >
         <DialogTitle>
-          {newItemDialogId === null ? "新しい商品を追加" : "商品を編集"}
+          {newItemDialogId === null
+            ? t("editItems.newItemTitle")
+            : t("editItems.editItemTitle")}
         </DialogTitle>
         <Box sx={{ padding: 2 }}>
           <Stack direction="column" gap={2}>
             <TextField
-              label="商品名"
+              label={t("editItems.nameLabel")}
               variant="outlined"
               fullWidth
               value={newItemName}
@@ -276,7 +269,7 @@ export default function EditItemsRoute() {
               autoFocus
             />
             <TextField
-              label="価格"
+              label={t("editItems.priceLabel")}
               variant="outlined"
               type="number"
               fullWidth
@@ -284,7 +277,7 @@ export default function EditItemsRoute() {
               onChange={(e) => setNewItemPrice(Number(e.target.value))}
             />
             <TextField
-              label="初期在庫"
+              label={t("editItems.initialStockLabel")}
               variant="outlined"
               type="number"
               fullWidth
@@ -295,7 +288,7 @@ export default function EditItemsRoute() {
         </Box>
         <DialogActions>
           <Button variant="tonal" onClick={() => setNewItemDialogId(undefined)}>
-            キャンセル
+            {t("common.cancel")}
           </Button>
           <Button
             variant="filled"
@@ -304,7 +297,9 @@ export default function EditItemsRoute() {
               !newItemName || newItemPrice <= 0 || newItemInitialStock <= 0
             }
           >
-            {newItemDialogId === null ? "追加" : "保存"}
+            {newItemDialogId === null
+              ? t("editItems.addItem")
+              : t("editItems.edit")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -312,10 +307,10 @@ export default function EditItemsRoute() {
         open={deleteConfirmationOpen}
         onClose={() => setDeleteConfirmationOpen(false)}
       >
-        <DialogTitle>商品を削除</DialogTitle>
+        <DialogTitle>{t("editItems.deleteItemTitle")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            本当にこの商品を削除しますか？削除すると元に戻せませんが、この商品がある注文は削除されません。
+            {t("editItems.deleteConfirmation")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -326,7 +321,7 @@ export default function EditItemsRoute() {
               setDeleteConfirmationItemId(null);
             }}
           >
-            キャンセル
+            {t("common.cancel")}
           </Button>
           <Button
             variant="filled"
@@ -339,7 +334,7 @@ export default function EditItemsRoute() {
               setDeleteConfirmationItemId(null);
             }}
           >
-            削除
+            {t("editItems.delete")}
           </Button>
         </DialogActions>
       </Dialog>

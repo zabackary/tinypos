@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useViewTransitionState } from "react-router-dom";
 import { useItem, useItemStock } from "../store/hooks";
+import { formatCount, formatCurrency } from "../utils/format";
 
 export interface ItemButtonProps {
   id: string;
@@ -102,7 +103,7 @@ export default function ItemButton({
                   : "none",
               }}
             >
-              {item.price}円
+              {formatCurrency(item.price)}
             </Box>{" "}
             &middot;{" "}
             <Box
@@ -113,7 +114,7 @@ export default function ItemButton({
                   : "none",
               }}
             >
-              {stock}個
+              {formatCount(stock)}
             </Box>
           </Typography>
         </CardContent>

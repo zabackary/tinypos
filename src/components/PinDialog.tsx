@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import usePOSStore from "../store/pos";
 
 export interface PinDialogProps {
@@ -31,6 +32,7 @@ export default function PinDialog({
 }: PinDialogProps) {
   const pin = usePOSStore((state) => state.pin);
   const [inputPin, setInputPin] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (open) {
@@ -60,17 +62,15 @@ export default function PinDialog({
         onCancel();
       }}
     >
-      <DialogTitle>ピンを入力</DialogTitle>
+      <DialogTitle>{t("pinDialog.title")}</DialogTitle>
       <DialogContent>
         {info ? <Typography>{info}</Typography> : null}
         {pin === null ? (
-          <Typography>
-            ピンが設定されていませんので、確認ボタンを押してください。
-          </Typography>
+          <Typography>{t("pinDialog.noPinSet")}</Typography>
         ) : null}
         <TextField
           sx={{ mt: 1 }}
-          label="ピン"
+          label={t("pinDialog.label")}
           type="password"
           fullWidth
           autoFocus
@@ -81,7 +81,7 @@ export default function PinDialog({
       </DialogContent>
       <DialogActions>
         <Button variant="tonal" onClick={onCancel}>
-          キャンセル
+          {t("common.cancel")}
         </Button>
         <Button
           variant="filled"
@@ -92,7 +92,7 @@ export default function PinDialog({
             }
           }}
         >
-          {actionLabel ? actionLabel : "確認"}
+          {actionLabel ? actionLabel : t("pinDialog.confirm")}
         </Button>
       </DialogActions>
     </Dialog>
