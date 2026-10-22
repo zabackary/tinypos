@@ -163,6 +163,8 @@ const translation = {
     noFileSelected: "No file selected",
     consoleCheck: "Check the console.",
     deletedLabel: "Deleted",
+    mergeUnsupportedVersion:
+      "This file was exported by an older version of the app and cannot be merged. Update the app on the computer that exported it and export again.",
     instanceExists:
       "This instance already exists. Please delete it and try again.",
   },

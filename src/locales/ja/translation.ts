@@ -166,6 +166,8 @@ const translation = {
     noFileSelected: "ファイルが選択されていません",
     consoleCheck: "コンソールを確認してください。",
     deletedLabel: "削除された",
+    mergeUnsupportedVersion:
+      "このファイルは古いバージョンのアプリで書き出されたため、マージできません。書き出したコンピューターのアプリを更新して、もう一度書き出してください。",
     instanceExists:
       "このインスタンスはもう存在します。削除してからまた試してください。",
   },
