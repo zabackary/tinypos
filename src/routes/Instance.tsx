@@ -4,6 +4,10 @@ import {
   Button,
   IconButton,
   keyframes,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Popover,
   Snackbar,
   SnackbarContent,
@@ -12,7 +16,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   useNavigate,
@@ -20,14 +24,17 @@ import {
   useViewTransitionState,
 } from "react-router-dom";
 import ItemButton from "../components/ItemButton";
+import MergeFlow from "../components/MergeFlow";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
 import NotFound from "../components/NotFound";
 import NumberPad from "../components/NumberPad";
 import PaymentColumn from "../components/PaymentColumn";
+import PinDialog from "../components/PinDialog";
 import ResponsiveButton from "../components/ResponsiveButton";
 import Section from "../components/Section";
 import { useInstance, useInstanceItems } from "../store/hooks";
 import usePOSStore from "../store/pos";
+import { exportInstance } from "../store/utils";
 
 export default function InstanceRoute() {
   const navigate = useNavigate();
@@ -77,6 +84,41 @@ export default function InstanceRoute() {
   }, [lastPurchaseId]);
 
   const { t } = useTranslation();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const [exportPinDialogOpen, setExportPinDialogOpen] = useState(false);
+  const [mergePinDialogOpen, setMergePinDialogOpen] = useState(false);
+  const [mergeActive, setMergeActive] = useState(false);
+
+  // Keep the screen awake. The browser releases the lock whenever the page is
+  // hidden, so it is re-requested when the page becomes visible again.
+  const wakeLockSupported = "wakeLock" in navigator;
+  const [keepAwake, setKeepAwake] = useState(true);
+  useEffect(() => {
+    if (!keepAwake || !wakeLockSupported) return;
+    let cancelled = false;
+    let sentinel: WakeLockSentinel | null = null;
+    const acquire = () => {
+      if (document.visibilityState !== "visible") return;
+      navigator.wakeLock
+        .request("screen")
+        .then((lock) => {
+          if (cancelled) lock.release();
+          else sentinel = lock;
+        })
+        .catch(() => {
+          // Denied (e.g. low battery); nothing useful to do.
+        });
+    };
+    acquire();
+    document.addEventListener("visibilitychange", acquire);
+    return () => {
+      cancelled = true;
+      document.removeEventListener("visibilitychange", acquire);
+      sentinel?.release();
+    };
+  }, [keepAwake, wakeLockSupported]);
 
   const isTransitioningEditItems = useViewTransitionState(
     `/${instance?.id}/edit`
@@ -149,6 +191,63 @@ export default function InstanceRoute() {
           >
             {t("instance.deleteOrder")}
           </ResponsiveButton>
+          <IconButton
+            ref={menuButtonRef}
+            sx={{ ml: 1 }}
+            aria-label={t("instance.more")}
+            onClick={() => setMenuOpen(true)}
+          >
+            <MaterialSymbolIcon icon="more_vert" />
+          </IconButton>
+          <Menu
+            anchorEl={menuButtonRef.current}
+            open={menuOpen}
+            onClose={() => setMenuOpen(false)}
+          >
+            <MenuItem
+              onClick={() => {
+                setMenuOpen(false);
+                setExportPinDialogOpen(true);
+              }}
+            >
+              <ListItemIcon>
+                <MaterialSymbolIcon icon="import_export" />
+              </ListItemIcon>
+              <ListItemText primary={t("instance.export")} />
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setMenuOpen(false);
+                setMergePinDialogOpen(true);
+              }}
+            >
+              <ListItemIcon>
+                <MaterialSymbolIcon icon="call_merge" />
+              </ListItemIcon>
+              <ListItemText primary={t("instance.mergeInto")} />
+            </MenuItem>
+            <MenuItem
+              disabled={!wakeLockSupported}
+              onClick={() => {
+                setMenuOpen(false);
+                setKeepAwake((prev) => !prev);
+              }}
+            >
+              <ListItemIcon>
+                <MaterialSymbolIcon icon="brightness_alert" fill={keepAwake} />
+              </ListItemIcon>
+              <ListItemText
+                primary={t("instance.keepAwake")}
+                secondary={
+                  wakeLockSupported
+                    ? keepAwake
+                      ? t("instance.keepAwakeOn")
+                      : undefined
+                    : t("instance.keepAwakeUnsupported")
+                }
+              />
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       <Stack
@@ -409,6 +508,34 @@ export default function InstanceRoute() {
           </Button>
         </Stack>
       </Popover>
+      <PinDialog
+        open={exportPinDialogOpen}
+        info={t("instanceButton.pinInfoExport")}
+        actionLabel={t("instanceButton.export")}
+        closeIfNoPin
+        onCancel={() => setExportPinDialogOpen(false)}
+        onEnter={() => {
+          exportInstance(instance.id);
+          setExportPinDialogOpen(false);
+        }}
+      />
+      <PinDialog
+        open={mergePinDialogOpen}
+        info={t("merge.pinInfo")}
+        actionLabel={t("merge.menuItem")}
+        closeIfNoPin
+        onCancel={() => setMergePinDialogOpen(false)}
+        onEnter={() => {
+          setMergePinDialogOpen(false);
+          setMergeActive(true);
+        }}
+      />
+      {mergeActive && (
+        <MergeFlow
+          instanceId={instance.id}
+          onFinished={() => setMergeActive(false)}
+        />
+      )}
     </>
   );
 }

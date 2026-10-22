@@ -107,6 +107,12 @@ const translation = {
       "データのCSVをダウンロードするには、PINを入力してください。",
   },
   instance: {
+    more: "その他",
+    export: "エクスポート",
+    mergeInto: "インスタンスにマージ",
+    keepAwake: "画面をスリープさせない",
+    keepAwakeOn: "このページを開いている間、画面はオンのままです",
+    keepAwakeUnsupported: "このブラウザーでは非対応です",
     back: "戻る",
     edit: "編集",
     orderHistory: "注文履歴",

@@ -102,6 +102,12 @@ const translation = {
     downloadPinInfo: "Enter your PIN to download the CSV data. ",
   },
   instance: {
+    more: "More options",
+    export: "Export",
+    mergeInto: "Merge into instance",
+    keepAwake: "Keep screen awake",
+    keepAwakeOn: "Screen will stay on while this page is open",
+    keepAwakeUnsupported: "Not supported by this browser",
     back: "Back",
     edit: "Edit",
     orderHistory: "Order history",
