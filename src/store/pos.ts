@@ -22,9 +22,15 @@ export interface Purchase {
   instanceId: string;
 
   date: string;
+  /** Epoch milliseconds; `date` is a locale string and can't be compared */
+  createdAt: number;
+  /** ID of the computer this purchase was made on */
+  clientId: string;
   items: {
     itemId: string;
     quantity: number;
+    /** Price of one unit at the time of purchase */
+    unitPrice: number;
   }[];
 
   total: number;
@@ -41,9 +47,13 @@ export interface Instance {
 }
 
 // When updating this store, make sure to also update the
-// `persistStore.ts` to ensure the state is persisted correctly.
-export const EXPORT_STATE_VERSION = 1;
+// `persistStore.ts` to ensure the state is persisted correctly, and bump
+// `STATE_VERSION` in `migrate.ts` if the shape changes.
 export interface POSStoreState {
+  /** Random ID identifying this computer; written to every export. */
+  clientId: string;
+  /** Epoch ms of the newest export merged in from each other client. */
+  mergedClients: Record<string, number>;
   pin: string | null;
   hasSeenWelcome: boolean;
   instances: Instance[];
@@ -89,7 +99,9 @@ export interface POSStoreActions {
 
 export type POSStore = POSStoreState & POSStoreActions;
 
-const usePOSStore = create<POSStore>((set) => ({
+const usePOSStore = create<POSStore>((set, get) => ({
+  clientId: uuidv4(),
+  mergedClients: {},
   pin: null,
   instances: [],
   items: [],
@@ -129,8 +141,15 @@ const usePOSStore = create<POSStore>((set) => ({
     useLogStore.getState().addLog("create", "instance", { id, name });
     return id;
   },
-  createPurchase(instanceId, items, total, paid) {
+  createPurchase(instanceId, orderItems, total, paid) {
     const id = uuidv4();
+    const now = new Date();
+    const { items: storeItems, clientId } = get();
+    const items = orderItems.map(({ itemId, quantity }) => ({
+      itemId,
+      quantity,
+      unitPrice: storeItems.find((item) => item.id === itemId)?.price ?? 0,
+    }));
     set((store) => ({
       purchases: [
         ...store.purchases,
@@ -138,7 +157,9 @@ const usePOSStore = create<POSStore>((set) => ({
           id,
           instanceId,
 
-          date: new Date().toLocaleString(),
+          date: now.toLocaleString(),
+          createdAt: now.getTime(),
+          clientId,
           items,
 
           total,
@@ -153,7 +174,9 @@ const usePOSStore = create<POSStore>((set) => ({
       .addLog("create", "purchase", {
         id,
         instanceId,
-        date: new Date().toLocaleString(),
+        date: now.toLocaleString(),
+        createdAt: now.getTime(),
+        clientId,
         items,
         total,
         paid,

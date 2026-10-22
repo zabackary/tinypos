@@ -1,6 +1,7 @@
 import { stringify as csvStringify } from "csv-stringify/browser/esm/sync";
 import i18n from "../i18n";
-import usePOSStore, { EXPORT_STATE_VERSION } from "./pos";
+import { migrateState, STATE_VERSION } from "./migrate";
+import usePOSStore from "./pos";
 
 export function downloadInstanceCsv(instanceId: string): void {
   const text = purchasesToCsv(instanceId);
@@ -32,7 +33,9 @@ export function exportInstance(instanceId: string): void {
     instance,
     items,
     purchases,
-    stateVersion: EXPORT_STATE_VERSION,
+    stateVersion: STATE_VERSION,
+    clientId: state.clientId,
+    exportedAt: Date.now(),
   };
   const blob = new Blob([JSON.stringify(data)], {
     type: "application/json",
@@ -58,13 +61,6 @@ export class InstanceImportError extends Error {
   }
 }
 
-const versionMappings: Record<number, (state: any) => any> = {
-  1: (state: any) => {
-    // Migrate from version 1 to 1
-    return state;
-  },
-};
-
 export async function importInstance(): Promise<string> {
   const input = document.createElement("input");
   input.type = "file";
@@ -80,7 +76,7 @@ export async function importInstance(): Promise<string> {
           let data = JSON.parse(text);
           const state = usePOSStore.getState();
           // Migrate the state
-          data = versionMappings[data.stateVersion as number](data);
+          data = migrateState(data, { localClientId: state.clientId });
           // Check if the instance already exists
           const existingInstance = state.instances.find(
             (i) => i.id === data.instance.id

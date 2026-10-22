@@ -1,4 +1,5 @@
 import { LOG_STORE_KEY } from "./log";
+import { migrateState, STATE_VERSION } from "./migrate";
 import usePOSStore, { type POSStoreState } from "./pos";
 
 const LOCALSTORAGE_KEY = "tiny-pos-storage";
@@ -22,7 +23,16 @@ export async function loadPersist() {
   }
   if (newest) {
     console.info("Restored from", newest.source);
-    usePOSStore.setState(newest.state);
+    try {
+      usePOSStore.setState(
+        migrateState(newest.state, {
+          localClientId:
+            newest.state.clientId ?? usePOSStore.getState().clientId,
+        })
+      );
+    } catch (error) {
+      console.error("Failed to migrate persisted state:", error);
+    }
   }
 
   hasLoaded = true;
@@ -58,10 +68,13 @@ interface StorageResult {
   source: string;
 }
 
-function persistToLocalStorage(state: POSStoreState) {
-  const serializedState = JSON.stringify({
+function serializeState(state: POSStoreState): string {
+  return JSON.stringify({
     time: new Date().getTime(),
     state: {
+      stateVersion: STATE_VERSION,
+      clientId: state.clientId,
+      mergedClients: state.mergedClients,
       instances: state.instances,
       items: state.items,
       purchases: state.purchases,
@@ -69,6 +82,10 @@ function persistToLocalStorage(state: POSStoreState) {
       hasSeenWelcome: state.hasSeenWelcome,
     },
   });
+}
+
+function persistToLocalStorage(state: POSStoreState) {
+  const serializedState = serializeState(state);
   try {
     localStorage.setItem(LOCALSTORAGE_KEY, serializedState);
   } catch (e) {
@@ -103,7 +120,6 @@ async function persistToOriginFS(state: POSStoreState) {
     return;
   }
 
-  const time = new Date();
   const dir = await navigator.storage.getDirectory();
   const fileHandle = await dir.getFileHandle(ORIGIN_FS_FILE, {
     create: true,
@@ -112,18 +128,7 @@ async function persistToOriginFS(state: POSStoreState) {
   // Delete the current file
   await writable.truncate(0);
   // Write the data
-  await writable.write(
-    JSON.stringify({
-      time: time.getTime(),
-      state: {
-        instances: state.instances,
-        items: state.items,
-        purchases: state.purchases,
-        pin: state.pin,
-        hasSeenWelcome: state.hasSeenWelcome,
-      },
-    })
-  );
+  await writable.write(serializeState(state));
   // Close the file
   await writable.close();
 }
