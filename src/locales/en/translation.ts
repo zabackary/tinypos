@@ -33,7 +33,7 @@ const translation = {
     changePin: "Change pin",
     help: "Help",
     persistWarning:
-      "Currently, if you do not have enough storage, data may not be saved properly. If you install this app, browsers like Chrome will allow you to save data more reliably.",
+      "If you do not have enough storage, data may not be saved properly. Installing this app in browsers like Chrome will allow more reliable persistance.",
     persistWarningDetail:
       "If you have sufficient storage, you can safely ignore this alert.",
     unsupportedFeaturesTitle:
@@ -64,14 +64,14 @@ const translation = {
   editItems: {
     saving: "Save",
     editingTitle: "Editing '{{name}}'",
-    noItems: "No Items",
-    addItem: "Add Item",
-    newItemTitle: "Add New Item",
-    editItemTitle: "Edit Item",
-    nameLabel: "Product Name",
+    noItems: "No items",
+    addItem: "Add item",
+    newItemTitle: "Add new item",
+    editItemTitle: "Edit item",
+    nameLabel: "Product name",
     priceLabel: "Price",
-    initialStockLabel: "Initial Stock",
-    deleteItemTitle: "Delete Item",
+    initialStockLabel: "Initial stock",
+    deleteItemTitle: "Delete item",
     deleteConfirmation:
       "Are you sure you want to delete this item? Deleting is irreversible, but it will not delete any orders that contain this item.",
     edit: "Edit",
@@ -82,8 +82,8 @@ const translation = {
   history: {
     title: "Order history",
     back: "Back",
-    csvDownload: "CSV Download",
-    noOrders: "No Orders",
+    csvDownload: "Download CSV",
+    noOrders: "No orders yet",
     stats: {
       orders: "Number of orders",
       avgRevenue: "Average order revenue",
@@ -101,7 +101,7 @@ const translation = {
     back: "Back",
     edit: "Edit",
     orderHistory: "Order history",
-    deleteOrder: "Delete this order",
+    deleteOrder: "Clear this order",
     noItems: "No items found",
     addItemsHint: "Click the edit button above to add items.",
     totalLabel_one: "Total ({{count}} item)",
