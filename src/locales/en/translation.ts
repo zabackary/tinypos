@@ -131,6 +131,10 @@ const translation = {
     changeValue: "{{value}}",
     itemQuantity_one: "{{count}} item",
     itemQuantity_other: "{{count}} items",
+    itemQuantityWithPrice_one: "{{count}} item · {{unitPrice}} each",
+    itemQuantityWithPrice_other: "{{count}} items · {{unitPrice}} each",
+    lineTotal: "{{value}}",
+    differentClient: "This purchase was made on a different computer",
   },
   instanceButton: {
     delete: "Delete",

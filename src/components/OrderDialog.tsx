@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Dialog,
   DialogActions,
@@ -11,6 +12,7 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useItemInfos, usePurchase } from "../store/hooks";
+import usePOSStore from "../store/pos";
 import { formatCurrency } from "../utils/format";
 
 export default function OrderDialog({
@@ -26,6 +28,7 @@ export default function OrderDialog({
 }) {
   const purchase = usePurchase(purchaseId);
   const items = useItemInfos(purchase?.instanceId ?? "", true);
+  const localClientId = usePOSStore((store) => store.clientId);
   const { t } = useTranslation();
 
   if (!purchase) return null;
@@ -34,13 +37,29 @@ export default function OrderDialog({
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
       <DialogTitle>{purchase.date}</DialogTitle>
       <DialogContent>
+        {purchase.clientId !== localClientId && (
+          <Alert severity="info" sx={{ mb: 1 }}>
+            {t("orderDialog.differentClient")}
+          </Alert>
+        )}
         <List>
           {purchase.items.map((item) => (
-            <ListItem key={item.itemId} disableGutters>
+            <ListItem
+              key={item.itemId}
+              disableGutters
+              secondaryAction={
+                <Typography>
+                  {t("orderDialog.lineTotal", {
+                    value: formatCurrency(item.unitPrice * item.quantity),
+                  })}
+                </Typography>
+              }
+            >
               <ListItemText
                 primary={items.find((i) => i.id === item.itemId)?.name}
-                secondary={t("orderDialog.itemQuantity", {
+                secondary={t("orderDialog.itemQuantityWithPrice", {
                   count: item.quantity,
+                  unitPrice: formatCurrency(item.unitPrice),
                 })}
               />
             </ListItem>

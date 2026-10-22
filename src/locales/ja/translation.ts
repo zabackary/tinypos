@@ -134,6 +134,9 @@ const translation = {
     paidValue: "{{value}}",
     changeValue: "{{value}}",
     itemQuantity: "{{count}}個",
+    itemQuantityWithPrice: "{{count}}個 · 単価{{unitPrice}}",
+    lineTotal: "{{value}}",
+    differentClient: "この注文は別のコンピューターで行われました",
   },
   instanceButton: {
     delete: "削除",
