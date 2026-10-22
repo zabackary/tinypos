@@ -14,6 +14,8 @@ export class MergeError extends Error {
 
 /** An exported instance file, already migrated to the current version. */
 export interface MergeFile {
+  /** The instance the file was exported from. */
+  instance: { id: string; name: string };
   clientId: string;
   /** Epoch ms at which the file was exported. */
   exportedAt: number;
@@ -37,6 +39,8 @@ export interface MergePlan {
   file: MergeFile;
   /** The file's client was merged before, at or after this file's export time. */
   alreadyMerged: boolean;
+  /** The file was exported from a different instance than the target. */
+  instanceMismatch: boolean;
   newItems: Item[];
   newPurchases: Purchase[];
   conflicts: MergeConflict[];
@@ -74,7 +78,7 @@ export function parseMergeFile(text: string): MergeFile {
     // could not be made safe.
     throw new MergeError(
       "Merging files exported from state version 1 is not supported.",
-      i18n.t("store.mergeUnsupportedVersion")
+      i18n.t("store.mergeUnsupportedVersion"),
     );
   }
   try {
@@ -85,6 +89,7 @@ export function parseMergeFile(text: string): MergeFile {
     throw invalid(`Failed to migrate merge file: ${error}`);
   }
   if (
+    typeof data.instance?.id !== "string" ||
     typeof data.clientId !== "string" ||
     typeof data.exportedAt !== "number" ||
     !Array.isArray(data.items) ||
@@ -93,6 +98,7 @@ export function parseMergeFile(text: string): MergeFile {
     throw invalid("Merge file is missing required fields.");
   }
   return {
+    instance: { id: data.instance.id, name: String(data.instance.name) },
     clientId: data.clientId,
     exportedAt: data.exportedAt,
     items: data.items,
@@ -103,12 +109,12 @@ export function parseMergeFile(text: string): MergeFile {
 /** Works out what merging `file` into `targetInstanceId` would change. */
 export function planMerge(
   file: MergeFile,
-  targetInstanceId: string
+  targetInstanceId: string,
 ): MergePlan {
   const state = usePOSStore.getState();
   const localItems = new Map(state.items.map((item) => [item.id, item]));
   const localPurchases = new Map(
-    state.purchases.map((purchase) => [purchase.id, purchase])
+    state.purchases.map((purchase) => [purchase.id, purchase]),
   );
 
   const newItems: Item[] = [];
@@ -148,14 +154,15 @@ export function planMerge(
       (purchase) =>
         purchase.items.reduce(
           (sum, line) => sum + line.unitPrice * line.quantity,
-          0
-        ) !== purchase.total
+          0,
+        ) !== purchase.total,
     )
     .map((purchase) => purchase.id);
 
   return {
     targetInstanceId,
     file,
+    instanceMismatch: file.instance.id !== targetInstanceId,
     alreadyMerged:
       (state.mergedClients[file.clientId] ?? -Infinity) >= file.exportedAt,
     newItems,
@@ -171,7 +178,7 @@ export function planMerge(
  */
 export function applyMerge(
   plan: MergePlan,
-  resolutions: Record<string, MergeResolution>
+  resolutions: Record<string, MergeResolution>,
 ): void {
   const remoteItemFields = new Map<string, Item>();
   const remoteItemDeleted = new Map<string, boolean>();
@@ -215,7 +222,7 @@ export function applyMerge(
       ...state.mergedClients,
       [plan.file.clientId]: Math.max(
         state.mergedClients[plan.file.clientId] ?? 0,
-        plan.file.exportedAt
+        plan.file.exportedAt,
       ),
     },
   }));

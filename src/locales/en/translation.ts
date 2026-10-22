@@ -44,6 +44,8 @@ const translation = {
     createInstance: "Create an instance",
     importTooltip: "View more",
     importInstance: "Import an instance",
+    importDescription:
+      "Imports a complete new copy of an instance from a file. To add orders to an instance you already have, use merge instead.",
     resetDialogTitle: "Reset all data (orders, entered items, etc.)",
     resetDialogBodyPrefix: "",
     resetDialogBody:
@@ -137,8 +139,10 @@ const translation = {
     differentClient: "This purchase was made on a different computer",
   },
   instanceButton: {
+    more: "More options",
     delete: "Delete",
     downloadCsv: "Download as CSV",
+    downloadCsvDescription: "For analysis in other tools",
     export: "Export",
     confirmDeleteTitle: "Delete instance",
     confirmDeleteBody:
@@ -166,7 +170,57 @@ const translation = {
     mergeUnsupportedVersion:
       "This file was exported by an older version of the app and cannot be merged. Update the app on the computer that exported it and export again.",
     instanceExists:
-      "This instance already exists. Please delete it and try again.",
+      'This instance already exists on this computer. To add orders from this file to the existing instance, try "Merge from file" instead.',
+  },
+  merge: {
+    menuItem: "Merge from file",
+    explanation:
+      "Merging attempts to combine two histories. Works best when the instance was exported from a single computer at first.",
+    mismatchTitle: "Different instance",
+    mismatchBody:
+      "This file was exported from a different instance (“{{fileName}}”) than the one you are merging into (“{{name}}”). This is probably not what you intended. Merge anyway?",
+    mismatchContinue: "Merge anyway",
+    pickInstanceTitle: "Merge into which instance?",
+    pinInfo: "Enter the PIN to merge orders from a file into this instance.",
+    errorTitle: "Could not merge",
+    summaryTitle: "Merge from file",
+    alreadyMergedNone:
+      "This computer already contains changes merged from the computer that exported this file, and there are no new changes.",
+    alreadyMergedOrders_one:
+      "This computer already contains changes merged from the computer that exported this file, but there is {{count}} new order.",
+    alreadyMergedOrders_other:
+      "This computer already contains changes merged from the computer that exported this file, but there are {{count}} new orders.",
+    alreadyMergedOther:
+      "This computer already contains changes merged from the computer that exported this file, but there are other new changes.",
+    noChanges: "The file has no new changes to merge.",
+    summaryBody_one: "{{count}} new order will be added to “{{name}}”.",
+    summaryBody_other: "{{count}} new orders will be added to “{{name}}”.",
+    newItems_one: "{{count}} new item will be added:",
+    newItems_other: "{{count}} new items will be added:",
+    conflictsNote_one: "{{count}} difference needs your decision.",
+    conflictsNote_other: "{{count}} differences need your decision.",
+    priceWarning_one:
+      "The item prices saved on {{count}} order do not add up to its total. The file may have been exported by an older version of the app.",
+    priceWarning_other:
+      "The item prices saved on {{count}} orders do not add up to their totals. The file may have been exported by an older version of the app.",
+    merge: "Merge",
+    mine: "This computer",
+    theirs: "File",
+    keepMine: "Keep mine",
+    useTheirs: "Use file's",
+    applyToAll_one: "Apply to the other {{count}} of this kind",
+    applyToAll_other: "Apply to the other {{count}} of this kind",
+    itemFieldsTitle: "Item differs",
+    itemFieldsBody: "“{{name}}” has a different name or price in the file.",
+    itemDeletedTitle: "Item deletion differs",
+    itemDeletedBody: "“{{name}}” is deleted on one computer but not the other.",
+    purchaseDeletedTitle: "Order deletion differs",
+    purchaseDeletedBody:
+      "The order from {{date}} is deleted on one computer but not the other.",
+    stateDeleted: "Deleted",
+    stateActive: "Not deleted",
+    doneTitle: "Merge complete",
+    doneBody: "Added {{orders}} orders and {{items}} items.",
   },
   numberPad: {
     submit: "Done",

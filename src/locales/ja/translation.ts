@@ -48,6 +48,8 @@ const translation = {
     createInstance: "インスタンスを作成",
     importTooltip: "もっと見る",
     importInstance: "インスタンスをインポート",
+    importDescription:
+      "ファイルからインスタンスを完全に新しいコピーとしてインポートします。すでにあるインスタンスに注文を追加するには、マージを使ってください。",
     resetDialogTitle:
       "すべてのデータ（注文・入力した商品など）をリセットします",
     resetDialogBodyPrefix: "",
@@ -139,8 +141,10 @@ const translation = {
     differentClient: "この注文は別のコンピューターで行われました",
   },
   instanceButton: {
+    more: "その他",
     delete: "削除",
     downloadCsv: "CSVとしてDL",
+    downloadCsvDescription: "他のツールでの分析用",
     export: "エクスポート",
     confirmDeleteTitle: "インスタンスを削除",
     confirmDeleteBody:
@@ -169,7 +173,51 @@ const translation = {
     mergeUnsupportedVersion:
       "このファイルは古いバージョンのアプリで書き出されたため、マージできません。書き出したコンピューターのアプリを更新して、もう一度書き出してください。",
     instanceExists:
-      "このインスタンスはもう存在します。削除してからまた試してください。",
+      "このインスタンスはこのコンピューターにすでに存在します。このファイルの注文を既存のインスタンスに追加するには、代わりに「ファイルからマージ」をお試しください。",
+  },
+  merge: {
+    menuItem: "ファイルからマージ",
+    explanation:
+      "マージは2つの履歴を結合しようとします。最初に1台のコンピューターから書き出したインスタンスで最もうまく動作します。",
+    mismatchTitle: "別のインスタンス",
+    mismatchBody:
+      "このファイルは、マージ先（「{{name}}」）とは別のインスタンス（「{{fileName}}」）から書き出されています。意図した操作ではない可能性があります。それでもマージしますか？",
+    mismatchContinue: "それでもマージ",
+    pickInstanceTitle: "どのインスタンスにマージしますか？",
+    pinInfo:
+      "ファイルの注文をこのインスタンスにマージするにはPINを入力してください。",
+    errorTitle: "マージできませんでした",
+    summaryTitle: "ファイルからマージ",
+    alreadyMergedNone:
+      "このコンピューターには、このファイルを書き出したコンピューターの変更がすでにマージされており、新しい変更はありません。",
+    alreadyMergedOrders:
+      "このコンピューターには、このファイルを書き出したコンピューターの変更がすでにマージされていますが、新しい注文が{{count}}件あります。",
+    alreadyMergedOther:
+      "このコンピューターには、このファイルを書き出したコンピューターの変更がすでにマージされていますが、ほかにも新しい変更があります。",
+    noChanges: "マージする新しい変更はありません。",
+    summaryBody: "新しい注文{{count}}件を「{{name}}」に追加します。",
+    newItems: "新しい商品{{count}}件を追加します：",
+    conflictsNote: "{{count}}件の違いについて確認が必要です。",
+    priceWarning:
+      "{{count}}件の注文で、保存された商品の価格が合計と一致しません。古いバージョンのアプリで書き出されたファイルの可能性があります。",
+    merge: "マージ",
+    mine: "このコンピューター",
+    theirs: "ファイル",
+    keepMine: "こちらを残す",
+    useTheirs: "ファイルを使う",
+    applyToAll: "同じ種類の残り{{count}}件にも適用",
+    itemFieldsTitle: "商品の違い",
+    itemFieldsBody: "「{{name}}」の名前または価格がファイルと異なります。",
+    itemDeletedTitle: "商品の削除状態の違い",
+    itemDeletedBody:
+      "「{{name}}」は一方のコンピューターでのみ削除されています。",
+    purchaseDeletedTitle: "注文の削除状態の違い",
+    purchaseDeletedBody:
+      "{{date}}の注文は一方のコンピューターでのみ削除されています。",
+    stateDeleted: "削除済み",
+    stateActive: "削除されていない",
+    doneTitle: "マージ完了",
+    doneBody: "注文{{orders}}件、商品{{items}}件を追加しました。",
   },
   numberPad: {
     submit: "終了",

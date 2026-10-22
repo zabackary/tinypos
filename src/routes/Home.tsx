@@ -9,6 +9,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  ListItemIcon,
+  ListItemText,
   Menu,
   MenuItem,
   Stack,
@@ -23,6 +25,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import InstanceButton from "../components/InstanceButton";
 import LanguagePickerDialog from "../components/LanguagePickerDialog";
+import MergeFlow, { MergeInstancePicker } from "../components/MergeFlow";
 import MaterialSymbolIcon from "../components/MaterialSymbolIcon";
 import PinDialog from "../components/PinDialog";
 import ResponsiveButton from "../components/ResponsiveButton";
@@ -99,6 +102,12 @@ export default function HomeRoute() {
   const [importPinDialogOpen, setImportPinDialogOpen] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const [importErrorDialogOpen, setImportErrorDialogOpen] = useState(false);
+
+  // Merge from file
+  const [mergePickerOpen, setMergePickerOpen] = useState(false);
+  const [mergeTargetId, setMergeTargetId] = useState<string | null>(null);
+  const [mergePinDialogOpen, setMergePinDialogOpen] = useState(false);
+  const [mergeActive, setMergeActive] = useState(false);
 
   // Language Picker
   const [languageSelectOpen, setLanguageSelectOpen] = useState(false);
@@ -333,7 +342,32 @@ export default function HomeRoute() {
                 setImportPinDialogOpen(true);
               }}
             >
-              {t("home.importInstance")}
+              <ListItemIcon>
+                <MaterialSymbolIcon icon="upload_file" />
+              </ListItemIcon>
+              <ListItemText
+                primary={t("home.importInstance")}
+                secondary={t("home.importDescription")}
+                slotProps={{ secondary: { sx: { whiteSpace: "normal" } } }}
+                sx={{ maxWidth: 280 }}
+              />
+            </MenuItem>
+            <MenuItem
+              disabled={instances.length === 0}
+              onClick={() => {
+                setImportDropdownExpanded(false);
+                setMergePickerOpen(true);
+              }}
+            >
+              <ListItemIcon>
+                <MaterialSymbolIcon icon="call_merge" />
+              </ListItemIcon>
+              <ListItemText
+                primary={t("merge.menuItem")}
+                secondary={t("merge.explanation")}
+                slotProps={{ secondary: { sx: { whiteSpace: "normal" } } }}
+                sx={{ maxWidth: 280 }}
+              />
             </MenuItem>
           </Menu>
         </Stack>
@@ -538,6 +572,37 @@ export default function HomeRoute() {
             });
         }}
       />
+      <MergeInstancePicker
+        open={mergePickerOpen}
+        onCancel={() => setMergePickerOpen(false)}
+        onPick={(id) => {
+          setMergeTargetId(id);
+          setMergePickerOpen(false);
+          setMergePinDialogOpen(true);
+        }}
+      />
+      <PinDialog
+        open={mergePinDialogOpen}
+        info={t("merge.pinInfo")}
+        actionLabel={t("merge.menuItem")}
+        closeIfNoPin
+        onCancel={() => setMergePinDialogOpen(false)}
+        onEnter={() => {
+          setMergePinDialogOpen(false);
+          setMergeActive(true);
+        }}
+      />
+      {mergeActive && mergeTargetId && (
+        <MergeFlow
+          instanceId={mergeTargetId}
+          onFinished={(merged) => {
+            setMergeActive(false);
+            if (merged) {
+              navigate(`/${mergeTargetId}`, { viewTransition: true });
+            }
+          }}
+        />
+      )}
       <Dialog
         open={importErrorDialogOpen}
         onClose={() => setImportErrorDialogOpen(false)}

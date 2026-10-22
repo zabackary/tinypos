@@ -9,18 +9,24 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Stack,
   Typography,
   useMediaQuery,
   type SxProps,
 } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useInstance, useInstanceStats } from "../store/hooks";
 import usePOSStore from "../store/pos";
 import { downloadInstanceCsv, exportInstance } from "../store/utils";
 import { formatCount } from "../utils/format";
 import MaterialSymbolIcon from "./MaterialSymbolIcon";
+import MergeFlow from "./MergeFlow";
 import PinDialog from "./PinDialog";
 
 export interface InstanceButtonProps {
@@ -44,6 +50,11 @@ export default function InstanceButton({
 
   const [downloadPinDialogOpen, setDownloadPinDialogOpen] = useState(false);
   const [exportPinDialogOpen, setExportPinDialogOpen] = useState(false);
+
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const [mergePinDialogOpen, setMergePinDialogOpen] = useState(false);
+  const [mergeActive, setMergeActive] = useState(false);
 
   const smallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const { t } = useTranslation();
@@ -104,16 +115,6 @@ export default function InstanceButton({
           </Button>
           <Button
             size="small"
-            startIcon={<MaterialSymbolIcon icon="download" />}
-            onClick={() => {
-              setDownloadPinDialogOpen(true);
-            }}
-            fullWidth={smallScreen}
-          >
-            {t("instanceButton.downloadCsv")}
-          </Button>
-          <Button
-            size="small"
             startIcon={<MaterialSymbolIcon icon="import_export" />}
             onClick={() => {
               setExportPinDialogOpen(true);
@@ -122,8 +123,69 @@ export default function InstanceButton({
           >
             {t("instanceButton.export")}
           </Button>
+          <IconButton
+            ref={moreButtonRef}
+            size="small"
+            aria-label={t("instanceButton.more")}
+            onClick={() => setMoreMenuOpen(true)}
+          >
+            <MaterialSymbolIcon icon="more_vert" />
+          </IconButton>
         </CardActions>
       </Card>
+      <Menu
+        anchorEl={moreButtonRef.current}
+        open={moreMenuOpen}
+        onClose={() => setMoreMenuOpen(false)}
+      >
+        <MenuItem
+          onClick={() => {
+            setMoreMenuOpen(false);
+            setDownloadPinDialogOpen(true);
+          }}
+        >
+          <ListItemIcon>
+            <MaterialSymbolIcon icon="download" />
+          </ListItemIcon>
+          <ListItemText
+            primary={t("instanceButton.downloadCsv")}
+            secondary={t("instanceButton.downloadCsvDescription")}
+            slotProps={{ secondary: { sx: { whiteSpace: "normal" } } }}
+            sx={{ maxWidth: 280 }}
+          />
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setMoreMenuOpen(false);
+            setMergePinDialogOpen(true);
+          }}
+        >
+          <ListItemIcon>
+            <MaterialSymbolIcon icon="call_merge" />
+          </ListItemIcon>
+          <ListItemText
+            secondary={t("merge.explanation")}
+            slotProps={{ secondary: { sx: { whiteSpace: "normal" } } }}
+            sx={{ maxWidth: 280 }}
+          >
+            {t("merge.menuItem")}
+          </ListItemText>
+        </MenuItem>
+      </Menu>
+      <PinDialog
+        open={mergePinDialogOpen}
+        info={t("merge.pinInfo")}
+        actionLabel={t("merge.menuItem")}
+        closeIfNoPin
+        onCancel={() => setMergePinDialogOpen(false)}
+        onEnter={() => {
+          setMergePinDialogOpen(false);
+          setMergeActive(true);
+        }}
+      />
+      {mergeActive && (
+        <MergeFlow instanceId={id} onFinished={() => setMergeActive(false)} />
+      )}
       <PinDialog
         open={confirmDeletePinDialogOpen}
         info={t("instanceButton.pinInfoDelete")}
