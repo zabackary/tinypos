@@ -75,12 +75,14 @@ const translation = {
     editItemTitle: "商品を編集",
     nameLabel: "商品名",
     priceLabel: "価格",
+    trackStockLabel: "在庫を管理する",
     initialStockLabel: "初期在庫",
     deleteItemTitle: "商品を削除",
     deleteConfirmation:
       "本当にこの商品を削除しますか？削除すると元に戻せませんが、この商品がある注文は削除されません。",
     edit: "編集",
     delete: "削除",
+    itemDetailsUntracked: "価格: {{price}}円, 在庫管理なし",
     itemDetails:
       "価格: {{price}}円, 初期在庫: {{initialStock}}個, 現在の在庫: {{stock}}",
   },

@@ -11,7 +11,8 @@ export interface Item {
 
   name: string;
   price: number;
-  initialStock: number;
+  /** null means stock is not tracked for this item */
+  initialStock: number | null;
 
   deleted: boolean;
 }
@@ -70,14 +71,14 @@ export interface POSStoreActions {
   createItem(
     instanceId: string,
     name: string,
-    initialStock: number,
+    initialStock: number | null,
     price: number
   ): string;
 
   updateItem(
     id: string,
     name: string,
-    initialStock: number,
+    initialStock: number | null,
     price: number
   ): void;
 

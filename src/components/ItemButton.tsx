@@ -36,7 +36,7 @@ export default function ItemButton({
 
   if (!item || stock === undefined) return null;
 
-  const disabled = stock - selectedCount <= 0;
+  const disabled = stock !== null && stock - selectedCount <= 0;
 
   return (
     <Card
@@ -106,18 +106,23 @@ export default function ItemButton({
               }}
             >
               {formatCurrency(item.price)}
-            </Box>{" "}
-            &middot;{" "}
-            <Box
-              component="span"
-              sx={{
-                viewTransitionName: isTransitioningEditItems
-                  ? `instance-${item.instanceId}-item-${item.id}-stock`
-                  : "none",
-              }}
-            >
-              {t("orderDialog.itemQuantity", { count: stock })}
             </Box>
+            {stock !== null && (
+              <>
+                {" "}
+                &middot;{" "}
+                <Box
+                  component="span"
+                  sx={{
+                    viewTransitionName: isTransitioningEditItems
+                      ? `instance-${item.instanceId}-item-${item.id}-stock`
+                      : "none",
+                  }}
+                >
+                  {t("orderDialog.itemQuantity", { count: stock })}
+                </Box>
+              </>
+            )}
           </Typography>
         </CardContent>
       </CardActionArea>

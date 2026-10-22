@@ -2,11 +2,14 @@ import {
   AppBar,
   Box,
   Button,
+  Checkbox,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControlLabel,
   List,
   ListItem,
   ListItemText,
@@ -78,11 +81,15 @@ function ItemItem({
         }
         secondary={
           <>
-            {t("editItems.itemDetails", {
-              price: item.price.toLocaleString(),
-              initialStock: item.initialStock.toLocaleString(),
-              stock,
-            })}
+            {item.initialStock === null
+              ? t("editItems.itemDetailsUntracked", {
+                  price: item.price.toLocaleString(),
+                })
+              : t("editItems.itemDetails", {
+                  price: item.price.toLocaleString(),
+                  initialStock: item.initialStock.toLocaleString(),
+                  stock,
+                })}
           </>
         }
       />
@@ -108,6 +115,7 @@ export default function EditItemsRoute() {
   >(undefined);
   const [newItemName, setNewItemName] = useState("");
   const [newItemPrice, setNewItemPrice] = useState(0);
+  const [newItemTrackStock, setNewItemTrackStock] = useState(false);
   const [newItemInitialStock, setNewItemInitialStock] = useState(0);
 
   const updateItem = usePOSStore((store) => store.updateItem);
@@ -166,7 +174,8 @@ export default function EditItemsRoute() {
                     setNewItemDialogId(item.id);
                     setNewItemName(item.name);
                     setNewItemPrice(item.price);
-                    setNewItemInitialStock(item.initialStock);
+                    setNewItemTrackStock(item.initialStock !== null);
+                    setNewItemInitialStock(item.initialStock ?? 0);
                   }}
                   onDelete={() => {
                     setDeleteConfirmationItemId(item.id);
@@ -217,6 +226,7 @@ export default function EditItemsRoute() {
             setNewItemDialogId(null);
             setNewItemName("");
             setNewItemPrice(0);
+            setNewItemTrackStock(false);
             setNewItemInitialStock(0);
           }}
         >
@@ -235,7 +245,7 @@ export default function EditItemsRoute() {
                 createItem(
                   instance.id,
                   newItemName,
-                  newItemInitialStock,
+                  newItemTrackStock ? newItemInitialStock : null,
                   newItemPrice
                 );
               } else if (newItemDialogId) {
@@ -243,7 +253,7 @@ export default function EditItemsRoute() {
                 updateItem(
                   newItemDialogId,
                   newItemName,
-                  newItemInitialStock,
+                  newItemTrackStock ? newItemInitialStock : null,
                   newItemPrice
                 );
               }
@@ -276,14 +286,31 @@ export default function EditItemsRoute() {
               value={newItemPrice}
               onChange={(e) => setNewItemPrice(Number(e.target.value))}
             />
-            <TextField
-              label={t("editItems.initialStockLabel")}
-              variant="outlined"
-              type="number"
-              fullWidth
-              value={newItemInitialStock}
-              onChange={(e) => setNewItemInitialStock(Number(e.target.value))}
-            />
+            <Box>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={newItemTrackStock}
+                    onChange={(e) => setNewItemTrackStock(e.target.checked)}
+                  />
+                }
+                label={t("editItems.trackStockLabel")}
+              />
+              <Collapse in={newItemTrackStock}>
+                <Box sx={{ pt: 1 }}>
+                  <TextField
+                    label={t("editItems.initialStockLabel")}
+                    variant="outlined"
+                    type="number"
+                    fullWidth
+                    value={newItemInitialStock}
+                    onChange={(e) =>
+                      setNewItemInitialStock(Number(e.target.value))
+                    }
+                  />
+                </Box>
+              </Collapse>
+            </Box>
           </Stack>
         </Box>
         <DialogActions>
@@ -294,7 +321,9 @@ export default function EditItemsRoute() {
             variant="filled"
             type="submit"
             disabled={
-              !newItemName || newItemPrice <= 0 || newItemInitialStock <= 0
+              !newItemName ||
+              newItemPrice <= 0 ||
+              (newItemTrackStock && newItemInitialStock <= 0)
             }
           >
             {newItemDialogId === null

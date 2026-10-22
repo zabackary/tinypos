@@ -70,12 +70,14 @@ const translation = {
     editItemTitle: "Edit item",
     nameLabel: "Product name",
     priceLabel: "Price",
+    trackStockLabel: "Track item stock",
     initialStockLabel: "Initial stock",
     deleteItemTitle: "Delete item",
     deleteConfirmation:
       "Are you sure you want to delete this item? Deleting is irreversible, but it will not delete any orders that contain this item.",
     edit: "Edit",
     delete: "Delete",
+    itemDetailsUntracked: "Price: {{price}}, Stock not tracked",
     itemDetails:
       "Price: {{price}}, Initial stock: {{initialStock}}, Current stock: {{stock}}",
   },

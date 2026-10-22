@@ -57,12 +57,14 @@ export function usePurchases(instanceId: string): string[] {
     .map((purchase) => purchase.id);
 }
 
-export function useItemStock(id: string): number | undefined {
+/** Returns undefined if the item doesn't exist, null if its stock isn't tracked. */
+export function useItemStock(id: string): number | null | undefined {
   const items = usePOSStore((store) => store.items);
   const purchases = usePOSStore((store) => store.purchases);
 
   const item = items.filter((item) => item.id === id)[0];
   if (!item) return undefined;
+  if (item.initialStock === null) return null;
 
   return purchases.reduce(
     (stock, purchase) =>
