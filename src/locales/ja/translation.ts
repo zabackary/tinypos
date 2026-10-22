@@ -120,6 +120,7 @@ const translation = {
     noItems: "商品がありません。",
     addItemsHint: "上の編集ボタンをクリックして商品を追加してください。",
     totalLabel: "合計 ({{count}}品)",
+    totalLabelCompact: "合計 ({{count}})",
     paidLabel: "お預かり金",
     changeLabel: "お釣り",
     orderDeletedSnackbar: "注文が削除されました",

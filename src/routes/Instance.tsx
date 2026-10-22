@@ -14,6 +14,7 @@ import {
   Stack,
   Toolbar,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -42,6 +43,7 @@ export default function InstanceRoute() {
   const instance = useInstance(params.instanceId ?? "");
   const items = useInstanceItems(instance?.id ?? "");
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [deletedSnackbarOpen, setDeletedSnackbarOpen] = useState(false);
   const [purchaseSavedSnackbarOpen, setPurchaseSavedSnackbarOpen] =
     useState(false);
@@ -251,12 +253,12 @@ export default function InstanceRoute() {
         </Toolbar>
       </AppBar>
       <Stack
-        direction="row"
+        direction={isMobile ? "column" : "row"}
         gap={2}
         flexGrow={1}
         sx={{
-          overflowY: "hidden",
-          minHeight: 500,
+          overflowY: isMobile ? "auto" : "hidden",
+          minHeight: isMobile ? 0 : 500,
           viewTransitionName: `instance-${instance.id}`,
         }}
       >
@@ -269,6 +271,7 @@ export default function InstanceRoute() {
           overflow="auto"
           minWidth={200}
           sx={{
+            ...(isMobile && { flexShrink: 0, minHeight: 240 }),
             viewTransitionName:
               isTransitioningEditItems || isTransitioningHistory
                 ? `instance-${instance.id}-items`
@@ -347,25 +350,38 @@ export default function InstanceRoute() {
             </Stack>
           )}
         </Section>
-        <Section direction={"column"} justifyContent={"center"} flexGrow={0}>
+        <Section
+          direction={isMobile ? "row" : "column"}
+          justifyContent={"center"}
+          flexGrow={0}
+          flexShrink={0}
+          gap={isMobile ? 1 : 0}
+        >
           <PaymentColumn
-            label={t("instance.totalLabel", {
-              count: Object.values(currentOrder).reduce((a, b) => a + b, 0),
-            })}
+            label={t(
+              isMobile ? "instance.totalLabelCompact" : "instance.totalLabel",
+              {
+                count: Object.values(currentOrder).reduce((a, b) => a + b, 0),
+              }
+            )}
             amount={total.toLocaleString("ja-JP")}
+            compact={isMobile}
           />
           <PaymentColumn
             label={t("instance.paidLabel")}
             amount={paidAmount}
             isTyping
+            compact={isMobile}
           />
           <PaymentColumn
             label={t("instance.changeLabel")}
             error={change < 0}
             amount={change.toLocaleString("ja-JP")}
+            compact={isMobile}
           />
         </Section>
         <NumberPad
+          sx={isMobile ? { flexShrink: 0 } : undefined}
           onNumberClick={(value) => {
             setPaidAmount((prev) => `${prev}${value}`);
           }}

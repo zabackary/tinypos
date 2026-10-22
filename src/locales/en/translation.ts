@@ -116,6 +116,7 @@ const translation = {
     addItemsHint: "Click the edit button above to add items.",
     totalLabel_one: "Total ({{count}} item)",
     totalLabel_other: "Total ({{count}} items)",
+    totalLabelCompact: "Total ({{count}})",
     paidLabel: "Received",
     changeLabel: "Change",
     orderDeletedSnackbar: "Order deleted",

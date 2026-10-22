@@ -7,6 +7,7 @@ export interface PaymentColumnProps {
   error?: boolean;
   isTyping?: boolean;
   caption?: string;
+  compact?: boolean;
 }
 
 export default function PaymentColumn({
@@ -15,11 +16,22 @@ export default function PaymentColumn({
   caption,
   error = false,
   isTyping = false,
+  compact = false,
 }: PaymentColumnProps) {
   const theme = useTheme();
   return (
-    <Stack direction={"column"} gap={1}>
-      <Typography variant="h6" component="h2" textAlign={"center"}>
+    <Stack
+      direction={"column"}
+      gap={1}
+      flex={compact ? 1 : undefined}
+      minWidth={0}
+    >
+      <Typography
+        variant={compact ? "body1" : "h6"}
+        component="h2"
+        textAlign={"center"}
+        noWrap={compact}
+      >
         {label}
       </Typography>
       <Box
@@ -41,14 +53,14 @@ export default function PaymentColumn({
               }
               `} 1s ${theme.transitions.easing.easeInOut} infinite alternate`
             : "none",
-          padding: 2,
+          padding: compact ? 1 : 2,
           textAlign: "center",
-          minWidth: 140,
+          minWidth: compact ? 0 : 140,
         }}
       >
         <Typography
-          variant="h4"
-          sx={{ padding: 1 }}
+          variant={compact ? "h6" : "h4"}
+          sx={{ padding: compact ? 0.5 : 1 }}
           component="span"
           textAlign={"center"}
         >
