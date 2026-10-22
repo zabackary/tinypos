@@ -111,7 +111,6 @@ const translation = {
     orderDeletedSnackbar: "Order deleted",
     undo: "Undo",
     orderSavedTitle: "Order saved",
-    deleteOrderButton: "Delete order",
   },
   pinDialog: {
     title: "Enter PIN",

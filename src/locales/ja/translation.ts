@@ -115,7 +115,6 @@ const translation = {
     orderDeletedSnackbar: "注文が削除されました",
     undo: "元に戻す",
     orderSavedTitle: "注文が保存されました",
-    deleteOrderButton: "注文を削除",
   },
   pinDialog: {
     title: "ピンを入力",

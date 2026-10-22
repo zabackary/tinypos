@@ -12,7 +12,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   useNavigate,
@@ -59,7 +59,22 @@ export default function InstanceRoute() {
   const createPurchase = usePOSStore((store) => store.createPurchase);
   const deletePurchase = usePOSStore((store) => store.deletePurchase);
 
-  const [lastPurchaseId, setLastPurchaseId] = useState<string | null>(null);
+  const [lastPurchase, setLastPurchase] = useState<{
+    id: string;
+    order: Record<string, number>;
+    paidAmount: string;
+  } | null>(null);
+
+  // Auto-close the popup 5s after the latest purchase; the cleanup cancels the
+  // previous purchase's timer so it can't close the popup for a newer order.
+  const lastPurchaseId = lastPurchase?.id;
+  useEffect(() => {
+    if (!lastPurchaseId) return;
+    const timeout = setTimeout(() => {
+      setPurchaseSavedSnackbarOpen(false);
+    }, 5000);
+    return () => clearTimeout(timeout);
+  }, [lastPurchaseId]);
 
   const { t } = useTranslation();
 
@@ -260,8 +275,8 @@ export default function InstanceRoute() {
           onSubmit={() => {
             if (change < 0 || Object.keys(currentOrder).length === 0) return;
             // Submit the purchase
-            setLastPurchaseId(
-              createPurchase(
+            setLastPurchase({
+              id: createPurchase(
                 instance.id,
                 Object.entries(currentOrder).map(([itemId, quantity]) => ({
                   itemId,
@@ -269,17 +284,16 @@ export default function InstanceRoute() {
                 })),
                 total,
                 Number(paidAmount)
-              )
-            );
+              ),
+              order: currentOrder,
+              paidAmount,
+            });
             // Reset the order and paid amount
             setCurrentOrder({});
             setPaidAmount("");
 
             // Show the snackbar
             setPurchaseSavedSnackbarOpen(true);
-            setTimeout(() => {
-              setPurchaseSavedSnackbarOpen(false);
-            }, 5000);
           }}
         />
       </Stack>
@@ -377,22 +391,21 @@ export default function InstanceRoute() {
           </Typography>
           <Button
             variant="outlined"
-            color="error"
             size="small"
             onClick={() => {
-              if (lastPurchaseId) {
-                deletePurchase(lastPurchaseId);
-                setLastPurchaseId(null);
+              if (lastPurchase) {
+                deletePurchase(lastPurchase.id);
+                setCurrentOrder(lastPurchase.order);
+                setPaidAmount(lastPurchase.paidAmount);
+                setLastPurchase(null);
                 setPurchaseSavedSnackbarOpen(false);
-                setClearedOrder(null);
-                setDeletedSnackbarOpen(true);
               }
             }}
             sx={{
               mb: 2,
             }}
           >
-            {t("instance.deleteOrderButton")}
+            {t("instance.undo")}
           </Button>
         </Stack>
       </Popover>
