@@ -38,6 +38,10 @@ export default function InstanceRoute() {
   const [deletedSnackbarOpen, setDeletedSnackbarOpen] = useState(false);
   const [purchaseSavedSnackbarOpen, setPurchaseSavedSnackbarOpen] =
     useState(false);
+  const [clearedOrder, setClearedOrder] = useState<{
+    order: Record<string, number>;
+    paidAmount: string;
+  } | null>(null);
 
   const [paidAmount, setPaidAmount] = useState("");
   const [currentOrder, setCurrentOrder] = useState<Record<string, number>>(
@@ -117,6 +121,11 @@ export default function InstanceRoute() {
             sx={{ ml: 1 }}
             startIcon={<MaterialSymbolIcon icon="delete" />}
             onClick={() => {
+              setClearedOrder(
+                Object.keys(currentOrder).length > 0 || paidAmount !== ""
+                  ? { order: currentOrder, paidAmount }
+                  : null
+              );
               setCurrentOrder({});
               setPaidAmount("");
               setDeletedSnackbarOpen(true);
@@ -280,7 +289,26 @@ export default function InstanceRoute() {
         onClose={() => setDeletedSnackbarOpen(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
-        <SnackbarContent message={t("instance.orderDeletedSnackbar")} />
+        <SnackbarContent
+          message={t("instance.orderDeletedSnackbar")}
+          action={
+            clearedOrder && (
+              <Button
+                variant="text"
+                size="small"
+                sx={{ color: theme.palette.inversePrimary.main }}
+                onClick={() => {
+                  setCurrentOrder(clearedOrder.order);
+                  setPaidAmount(clearedOrder.paidAmount);
+                  setClearedOrder(null);
+                  setDeletedSnackbarOpen(false);
+                }}
+              >
+                {t("instance.undo")}
+              </Button>
+            )
+          }
+        />
       </Snackbar>
       <Popover
         open={purchaseSavedSnackbarOpen}
@@ -356,6 +384,7 @@ export default function InstanceRoute() {
                 deletePurchase(lastPurchaseId);
                 setLastPurchaseId(null);
                 setPurchaseSavedSnackbarOpen(false);
+                setClearedOrder(null);
                 setDeletedSnackbarOpen(true);
               }
             }}

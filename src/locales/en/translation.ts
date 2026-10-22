@@ -109,6 +109,7 @@ const translation = {
     paidLabel: "Received",
     changeLabel: "Change",
     orderDeletedSnackbar: "Order deleted",
+    undo: "Undo",
     orderSavedTitle: "Order saved",
     deleteOrderButton: "Delete order",
   },
